@@ -3,7 +3,7 @@
 -- NPC: Valah Molkot
 -- Starts and Finishes Quest: A Lady's Heart
 -- @zone 236
--- @pos 59 8 -221
+-- !pos 59 8 -221
 -----------------------------------
 
 require("scripts/globals/settings");
@@ -53,7 +53,7 @@ itemQuality = 0;
     if (itemQuality == 2) then
         if (ALadysHeart == QUEST_COMPLETED) then
             player:startEvent(0x00a0, 0, 236, 4);
-        else 
+        else
             player:startEvent(0x00a0, 0, 236, 2);
         end
     elseif (itemQuality == 1) then
@@ -61,14 +61,14 @@ itemQuality = 0;
             player:startEvent(0x00a0, 0, 236, 5);
         elseif (ALadysHeart == QUEST_ACCEPTED) then
             player:startEvent(0x00a0, 0, 236, 3);
-        else 
+        else
             player:startEvent(0x00a0, 0, 236, 1);
         end
-    else 
+    else
         player:startEvent(0x00a0, 0, 236, 0);
     end
 
-end; 
+end;
 
 
 -----------------------------------
@@ -77,7 +77,7 @@ end;
 
 function onTrigger(player,npc)
     player:startEvent(0x00a0, 0, 236, 10);
-end; 
+end;
 
 
 -----------------------------------
@@ -85,8 +85,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 
@@ -95,13 +95,13 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x00a0 and option == 2002) then
         player:tradeComplete();
         player:completeQuest(BASTOK,A_LADY_S_HEART);
-        player:addFame(BASTOK,BAS_FAME*120);
+        player:addFame(BASTOK,120);
         player:moghouseFlag(2);
         player:messageSpecial(MOGHOUSE_EXIT);
     elseif (csid == 0x00a0 and option == 1) then

@@ -1,7 +1,7 @@
 -----------------------------------
---    Area: Inner Horutoto Ruins
---    NPC:  _5cb (Gate of Darkness)
---  @pos -228 0 99 192
+-- Area: Inner Horutoto Ruins
+-- NPC:  _5cb (Gate of Darkness)
+-- !pos -228 0 99 192
 -----------------------------------
 package.loaded["scripts/zones/Inner_Horutoto_Ruins/TextIDs"] = nil;
 -----------------------------------
@@ -26,15 +26,15 @@ function onTrigger(player,npc)
         player:messageSpecial(DOOR_FIRMLY_CLOSED);
     end
     return 1;
-end; 
-        
+end;
+
 -----------------------------------
 -- onEventUpdate
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -42,8 +42,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
     if (csid == 0x004B) then
         player:setVar("MissionStatus",10)
     end

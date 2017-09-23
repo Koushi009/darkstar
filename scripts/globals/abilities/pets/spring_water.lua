@@ -1,11 +1,10 @@
 ---------------------------------------------------
 -- Spring Water
 ---------------------------------------------------
-
+require("scripts/globals/monstertpmoves");
 require("scripts/globals/settings");
 require("scripts/globals/status");
-require("scripts/globals/monstertpmoves");
-
+require("scripts/globals/msg");
 ---------------------------------------------------
 
 function onAbilityCheck(player, target, ability)
@@ -15,10 +14,10 @@ end;
 function onPetAbility(target, pet, skill)
     local base = 47 + pet:getMainLvl()*3;
     local tp = skill:getTP();
-    if tp < 100 then
-        tp = 100;
+    if tp < 1000 then
+        tp = 1000;
     end
-    base = base * tp / 100;
+    base = base * tp / 1000;
 
     if (target:getHP()+base > target:getMaxHP()) then
         base = target:getMaxHP() - target:getHP(); --cap it
@@ -33,7 +32,7 @@ function onPetAbility(target, pet, skill)
     if math.random() > 0.5 then
         target:delStatusEffect(EFFECT_SLOW);
     end
-    skill:setMsg(MSG_SELF_HEAL);
+    skill:setMsg(msgBasic.SELF_HEAL);
     target:addHP(base);
     return base;
 end

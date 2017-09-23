@@ -3,21 +3,18 @@
 --  MOB: Knight Crab
 -----------------------------------
 
-require("scripts/globals/titles");
-
 -----------------------------------
 -- onMobSpawn Action
 -----------------------------------
 
 function onMobSpawn(mob)
-    SetServerVariable("[POP]King_Arthro",0);
 end;
 
 -----------------------------------
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
 end;
 
 -----------------------------------

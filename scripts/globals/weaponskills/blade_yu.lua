@@ -16,7 +16,7 @@ require("scripts/globals/settings");
 require("scripts/globals/weaponskills");
 -----------------------------------
 
-function onUseWeaponSkill(player, target, wsID, tp, primary)
+function onUseWeaponSkill(player, target, wsID, tp, primary, action, taChar)
 
     local params = {};
     params.ftp100 = 2.25; params.ftp200 = 2.25; params.ftp300 = 2.25;
@@ -30,11 +30,10 @@ function onUseWeaponSkill(player, target, wsID, tp, primary)
         params.dex_wsc = 0.4; params.int_wsc = 0.4;
     end
 
-    local damage, tpHits, extraHits = doMagicWeaponskill(player, target, wsID, params, tp, primary);
+    local damage, tpHits, extraHits = doMagicWeaponskill(player, target, wsID, tp, primary, action, params);
 
     if (damage > 0) then
-        local tp = player:getTP();
-        local duration = (tp/100 * 15) + 75;
+        local duration = (tp/1000 * 15) + 75;
         if (target:hasStatusEffect(EFFECT_POISON) == false) then
             target:addStatusEffect(EFFECT_POISON, 10, 0, duration);
         end

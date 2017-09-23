@@ -1,14 +1,14 @@
 -----------------------------------
 -- Area: Bastok Mines
--- NPC:  Phara
+--  NPC: Phara
 -- Starts and Finishes Quest: The doorman (start)
 -- Involved in Quest: The Talekeeper's Truth
--- @zone 234
--- @pos 75 0 -80
+-- !zone 234
+-- !pos 75 0 -80
 -----------------------------------
 package.loaded["scripts/zones/Bastok_Mines/TextIDs"] = nil;
 -----------------------------------
-
+require("scripts/globals/status");
 require("scripts/globals/settings");
 require("scripts/globals/keyitems");
 require("scripts/globals/quests");
@@ -27,10 +27,10 @@ end;
 
 function onTrigger(player,npc)
 
-    theDoorman = player:getQuestStatus(BASTOK,THE_DOORMAN);
-    theTalekeeperTruth = player:getQuestStatus(BASTOK,THE_TALEKEEPER_S_TRUTH);
+    local theDoorman = player:getQuestStatus(BASTOK,THE_DOORMAN);
+    local theTalekeeperTruth = player:getQuestStatus(BASTOK,THE_TALEKEEPER_S_TRUTH);
 
-    if (theDoorman == QUEST_AVAILABLE and player:getMainJob() == 1 and player:getMainLvl() >= 40) then
+    if (theDoorman == QUEST_AVAILABLE and player:getMainJob() == JOBS.WAR and player:getMainLvl() >= 40) then
         player:startEvent(0x0097); -- Start Quests "The doorman"
     elseif (player:hasKeyItem(SWORD_GRIP_MATERIAL)) then
         player:startEvent(0x0098); -- Need to wait 1 vanadiel day
@@ -49,8 +49,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -58,8 +58,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x0097) then
         player:addQuest(BASTOK,THE_DOORMAN);

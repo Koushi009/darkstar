@@ -230,7 +230,7 @@ enum ZONEID : uint16
     ZONE_DYNAMIS_BASTOK               = 186,
     ZONE_DYNAMIS_WINDURST             = 187,
     ZONE_DYNAMIS_JEUNO                = 188,
-    ZONE_189                          = 189,
+    ZONE_189                          = 189, // Southern San d'Oria [S] Residential Area
     ZONE_KING_RANPERRES_TOMB          = 190,
     ZONE_DANGRUF_WADI                 = 191,
     ZONE_INNER_HORUTOTO_RUINS         = 192,
@@ -240,7 +240,7 @@ enum ZONEID : uint16
     ZONE_GUSGEN_MINES                 = 196,
     ZONE_CRAWLERS_NEST                = 197,
     ZONE_MAZE_OF_SHAKHRAMI            = 198,
-    ZONE_199                          = 199,
+    ZONE_199                          = 199, // Bastok Markets [S] Residential Area
     ZONE_GARLAIGE_CITADEL             = 200,
     ZONE_CLOISTER_OF_GALES            = 201,
     ZONE_CLOISTER_OF_STORMS           = 202,
@@ -255,12 +255,12 @@ enum ZONEID : uint16
     ZONE_CLOISTER_OF_TIDES            = 211,
     ZONE_GUSTAV_TUNNEL                = 212,
     ZONE_LABYRINTH_OF_ONZOZO          = 213,
-    ZONE_214                          = 214, // Alt. ID of Residential Zone?
+    ZONE_214                          = 214, // Aht Urhgan Residential Area
     ZONE_ABYSSEA_ATTOHWA              = 215,
     ZONE_ABYSSEA_MISAREAUX            = 216,
     ZONE_ABYSSEA_VUNKERL              = 217,
     ZONE_ABYSSEA_ALTEPA               = 218,
-    ZONE_218                          = 218,
+    ZONE_219                          = 219, // Windurst Waters [S] Residential Area
     ZONE_SHIP_BOUND_FOR_SELBINA       = 220,
     ZONE_SHIP_BOUND_FOR_MHAURA        = 221,
     ZONE_PROVENANCE                   = 222,
@@ -333,7 +333,7 @@ enum ZONEID : uint16
     ZONE_ESCHA_RUAUN                  = 289,
     ZONE_DESUETIA_EMPYREAL_PARADOX    = 290,
     ZONE_REISENJIMA                   = 291,
-    ZONE_292                          = 292,
+    ZONE_REISENJIMA_HENGE             = 292,
     ZONE_REISENJIMA_SANCTORIUM        = 293
 };
 
@@ -519,11 +519,12 @@ public:
     uint8           GetSoloBattleMusic();
     uint8           GetPartyBattleMusic();
     uint8           GetBackgroundMusicDay();
-    uint8 GetBackgroundMusicNight();
+    uint8           GetBackgroundMusicNight();
     zoneLine_t*     GetZoneLine(uint32 zoneLineID);
 
     virtual CCharEntity*    GetCharByName(int8* name);                              // finds the player if exists in zone
     virtual CCharEntity*    GetCharByID(uint32 id);
+    // Gets an entity - ignores instances (use CBaseEntity->GetEntity if possible)
     virtual CBaseEntity*    GetEntity(uint16 targid, uint8 filter = -1);            // получаем указатель на любую сущность в зоне
 
     bool            IsWeatherStatic();                                              // погода в зоне не требует изменения (никогда не меняется)
@@ -605,12 +606,12 @@ private:
     void    LoadZoneSettings();             // настройки зоны
     void    LoadNavMesh();                  // Load the zones navmesh. Must exist in scripts/zones/:zone/NavMesh.nav
 
-    CTaskMgr::CTask* ZoneTimer;             // указатель на созданный таймер - ZoneServer. необходим для возможности его остановки
 
     CTreasurePool*  m_TreasurePool;         // глобальный TreasuerPool
 
 protected:
 
+    CTaskMgr::CTask* ZoneTimer;             // указатель на созданный таймер - ZoneServer. необходим для возможности его остановки
     void createZoneTimer();
     void CharZoneIn(CCharEntity* PChar);
     void CharZoneOut(CCharEntity* PChar);

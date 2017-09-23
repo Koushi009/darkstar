@@ -2,16 +2,15 @@
 -- Area: Windurst Waters
 -- NPC: Honoi-Gumoi
 -- Involved In Quest: Crying Over Onions, Hat in Hand
---  @zone = 238
---  @pos = -195 -11 -120
+-- !pos -195 -11 -120 238
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters/TextIDs"] = nil;
 -----------------------------------
-
-require("scripts/globals/quests");
-require("scripts/globals/settings");
 require("scripts/zones/Windurst_Waters/TextIDs");
+require("scripts/globals/settings");
 require("scripts/globals/keyitems");
+require("scripts/globals/quests");
+
 -----------------------------------
 -- onTrade Action
 -----------------------------------
@@ -23,9 +22,9 @@ function onTrade(player,npc,trade)
         StarSpinel = trade:hasItemQty(1149,1);
         if (StarSpinel == true and count == 1) then
             player:startEvent(0x0307,0,1149);
-        end    
-    end    
-end; 
+        end
+    end
+end;
 
 -----------------------------------
 -- onTrigger Action
@@ -81,8 +80,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID2: %u",csid);
---printf("RESULT2: %u",option);
+    -- printf("CSID2: %u",csid);
+    -- printf("RESULT2: %u",option);
 
 end;
 
@@ -91,8 +90,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
     if (csid == 0x0306) then
         player:setVar("CryingOverOnions",1);
     elseif (csid == 0x0307) then
@@ -102,14 +101,14 @@ function onEventFinish(player,csid,option)
         player:messageSpecial(ITEM_OBTAINED,13136);
     elseif (csid == 0x0308) then
         player:completeQuest(WINDURST,CRYING_OVER_ONIONS);
-        player:addFame(WINDURST,WIN_FAME*120);
+        player:addFame(WINDURST,120);
         player:setVar("CryingOverOnions",0);
         player:needToZone(true);
     elseif (csid == 0x030c) then
         player:addQuest(WINDURST,WILD_CARD);
     elseif (csid == 0x030e) then
         player:completeQuest(WINDURST,WILD_CARD);
-        player:addFame(WINDURST,WIN_FAME*135);
+        player:addFame(WINDURST,135);
         player:addTitle(DREAM_DWELLER);
         player:setVar("WildCard",0);
         player:needToZone(true);
@@ -122,7 +121,5 @@ function onEventFinish(player,csid,option)
         player:messageSpecial(KEYITEM_OBTAINED,CRACKED_MIMEO_MIRROR);
     end
 end;
-
-
 
 

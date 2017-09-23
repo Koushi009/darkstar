@@ -26,8 +26,6 @@ This file is part of DarkStar-server source code.
 #include "../../entities/charentity.h"
 #include "../../packets/action.h"
 #include "../../utils/battleutils.h"
-#include "../../mobskill.h"
-#include "../../weapon_skill.h"
 #include "../../items/item_weapon.h"
 #include "../../status_effect_container.h"
 #include "../../utils/charutils.h"
@@ -53,7 +51,7 @@ CRangeState::CRangeState(CCharEntity* PEntity, uint16 targid) :
 
     if (charutils::hasTrait(m_PEntity, TRAIT_RAPID_SHOT))
     {
-        auto chance {m_PEntity->getMod(MOD_RAPID_SHOT) + m_PEntity->PMeritPoints->GetMeritValue(MERIT_RAPID_SHOT_RATE, m_PEntity)};
+        auto chance {m_PEntity->getMod(Mod::RAPID_SHOT) + m_PEntity->PMeritPoints->GetMeritValue(MERIT_RAPID_SHOT_RATE, m_PEntity)};
         if (dsprand::GetRandomNumber(100) < chance)
         {
             //reduce delay by 10%-50%
@@ -85,7 +83,7 @@ void CRangeState::SpendCost()
 
 bool CRangeState::CanChangeState()
 {
-    return IsCompleted();
+    return false;
 }
 
 bool CRangeState::Update(time_point tick)
@@ -100,7 +98,8 @@ bool CRangeState::Update(time_point tick)
             m_errorMsg = std::make_unique<CMessageBasicPacket>(m_PEntity, m_PEntity, 0, 0, MSGBASIC_MOVE_AND_INTERRUPT);
         }
         action_t action;
-        if (m_errorMsg && m_errorMsg->getMessageID() != MSGBASIC_CANNOT_SEE)
+        auto cast_errorMsg = dynamic_cast<CMessageBasicPacket*>(m_errorMsg.get());
+        if (m_errorMsg && (!cast_errorMsg || cast_errorMsg->getMessageID() != MSGBASIC_CANNOT_SEE))
         {
             action.id = m_PEntity->id;
             action.actiontype = ACTION_RANGED_INTERRUPT;
@@ -122,7 +121,7 @@ bool CRangeState::Update(time_point tick)
         Complete();
     }
 
-    if (IsCompleted() && tick > GetEntryTime() + m_aimTime + 2s)
+    if (IsCompleted() && tick > GetEntryTime() + m_aimTime + 1.5s)
     {
         return true;
     }
@@ -185,6 +184,11 @@ bool CRangeState::CanUseRangedAttack(CBattleEntity* PTarget)
     if (distance(m_PEntity->loc.p, PTarget->loc.p) > 25)
     {
         m_errorMsg = std::make_unique<CMessageBasicPacket>(m_PEntity, PTarget, 0, 0, MSGBASIC_TOO_FAR_AWAY);
+        return false;
+    }
+    if (!m_PEntity->PAI->TargetFind->canSee(&PTarget->loc.p))
+    {
+        m_errorMsg = std::make_unique<CMessageBasicPacket>(m_PEntity, PTarget, 0, 0, MSGBASIC_CANNOT_PERFORM_ACTION);
         return false;
     }
 

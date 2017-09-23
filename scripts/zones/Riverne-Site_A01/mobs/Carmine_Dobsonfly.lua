@@ -33,7 +33,14 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
+end;
+
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
     local firstDobsonfly = 16900230;
     local mobID = mob:getID();
     local carminesKilled = GetServerVariable("[NM]Carmine_Dobsonflies_Killed");
@@ -43,12 +50,12 @@ function onMobDeath(mob, killer, ally)
         if (carminesKilled == 1023) then -- all have been defeated, allow for them to respawn while setting their respawn time to be all the same
             local respawnTime = math.random(75600,86400);
             for  i = firstDobsonfly, firstDobsonfly + 9, 1 do    
-                DeterMob(i, false);
+                DisallowRespawn(i, false);
                 GetMobByID(i):setRespawnTime(respawnTime);
             end
             carminesKilled = 0; -- clear the server var
         else -- prevent them from respawning
-            DeterMob(mobID, true);
+            DisallowRespawn(mobID, true);
         end
         SetServerVariable("[NM]Carmine_Dobsonflies_Killed", carminesKilled);
     end

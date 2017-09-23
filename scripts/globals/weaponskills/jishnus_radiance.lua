@@ -16,7 +16,7 @@ require("scripts/globals/settings");
 require("scripts/globals/weaponskills");
 -----------------------------------
 
-function onUseWeaponSkill(player, target, wsID, tp, primary, action)
+function onUseWeaponSkill(player, target, wsID, tp, primary, action, taChar)
 
     local params = {};
     params.numHits = 3;
@@ -34,8 +34,12 @@ function onUseWeaponSkill(player, target, wsID, tp, primary, action)
         params.dex_wsc = 0.8;
     end
 
-    local damage, criticalHit, tpHits, extraHits = doRangedWeaponskill(player, target, wsID, params, tp, primary);
-    action:speceffect(target:getID(), 8)
+    local damage, criticalHit, tpHits, extraHits, shadowsAbsorbed = doRangedWeaponskill(player, target, wsID, params, tp, primary, action);
+    if shadowsAbsorbed + tpHits + extraHits == 3 then
+        action:speceffect(target:getID(), bit.bor(action:speceffect(target:getID()), 8))
+    elseif shadowsAbsorbed + tpHits + extraHits == 2 then
+        action:speceffect(target:getID(), bit.bor(action:speceffect(target:getID()), 4))
+    end
     return tpHits, extraHits, criticalHit, damage;
 
 end;

@@ -1,7 +1,7 @@
 -----------------------------------------
---    ID: 4202
---    Daedalus Wing
---    Increases TP of the user by 100
+-- ID: 4202
+-- Daedalus Wing
+-- Increases TP of the user by 100
 -----------------------------------------
 
 -----------------------------------------
@@ -17,5 +17,5 @@ end;
 -----------------------------------------
 
 function onItemUse(target)
-    target:addTP(100);
+    target:addTP(1000);
 end;

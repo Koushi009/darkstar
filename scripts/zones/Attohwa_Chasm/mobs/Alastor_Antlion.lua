@@ -2,10 +2,10 @@
 -- Area: Attohwa Chasm
 --  NPC: Alastor Antlion
 -----------------------------------
-
-require("scripts/globals/titles");
+mixins = {require("scripts/mixins/families/antlion_ambush_noaggro")}
 require("scripts/globals/status");
 require("scripts/globals/magic");
+require("scripts/globals/msg");
 
 -----------------------------------
 -- onMobInitialize Action
@@ -25,21 +25,19 @@ end;
 -----------------------------------
 
 function onMobSpawn(mob)
-    mob:setTP(100);
 end;
 
 -----------------------------------
 -- onMobEngaged
 -----------------------------------
-function onMobEngaged(mob, killer)
-    mob:useMobAbility(278); -- Pit Ambush
+function onMobEngaged(mob, target)
 end;
 
 -----------------------------------
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
 end;
 
 -----------------------------------
@@ -61,6 +59,6 @@ function onAdditionalEffect(mob, player)
         if (not player:hasStatusEffect(EFFECT_PETRIFICATION)) then
             player:addStatusEffect(EFFECT_PETRIFICATION, 1, 0, duration);
         end
-        return SUBEFFECT_PETRIFY, MSGBASIC_ADD_EFFECT_STATUS, EFFECT_PETRIFICATION;
+        return SUBEFFECT_PETRIFY, msgBasic.ADD_EFFECT_STATUS, EFFECT_PETRIFICATION;
     end
 end;

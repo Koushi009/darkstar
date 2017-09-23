@@ -21,13 +21,19 @@ function onSpellCast(caster,target,spell)
         spell:setMsg(75); -- no effect
     else        
         local dINT = caster:getStat(MOD_INT) - target:getStat(MOD_INT);
-        local resist = applyResistance(caster,spell,target,dINT,37,0);
+        local params = {};
+        params.diff = nil;
+        params.attribute = MOD_INT;
+        params.skillType = 37;
+        params.bonus = 0;
+        params.effect = nil;
+        resist = applyResistance(caster, target, spell, params);
         if (resist <= 0.125) then
             spell:setMsg(85);
         else
             spell:setMsg(330);
             caster:addStatusEffect(EFFECT_DEX_BOOST,ABSORB_SPELL_AMOUNT*resist*((100+(caster:getMod(MOD_AUGMENTS_ABSORB)))/100), ABSORB_SPELL_TICK, ABSORB_SPELL_AMOUNT*ABSORB_SPELL_TICK,FLAG_DISPELABLE); -- caster gains DEX
-            target:addStatusEffect(EFFECT_DEX_DOWN,ABSORB_SPELL_AMOUNT*resist*((100+(caster:getMod(MOD_AUGMENTS_ABSORB)))/100), ABSORB_SPELL_TICK, ABSORB_SPELL_AMOUNT*ABSORB_SPELL_TICK,FLAG_ERASBLE);    -- target loses DEX
+            target:addStatusEffect(EFFECT_DEX_DOWN,ABSORB_SPELL_AMOUNT*resist*((100+(caster:getMod(MOD_AUGMENTS_ABSORB)))/100), ABSORB_SPELL_TICK, ABSORB_SPELL_AMOUNT*ABSORB_SPELL_TICK,FLAG_ERASABLE);    -- target loses DEX
         end
     end
     return EFFECT_DEX_DOWN;

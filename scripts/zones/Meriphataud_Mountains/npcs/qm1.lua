@@ -2,7 +2,7 @@
 -- Area: Meriphataud Mountains
 -- NPC: qm1 (???)
 -- Involved in Quest: The Holy Crest
--- @pos 641 -15 7 119
+-- !pos 641 -15 7 119
 -----------------------------------
 package.loaded["scripts/zones/Meriphataud_Mountains/TextIDs"] = nil;
 -----------------------------------
@@ -20,7 +20,7 @@ function onTrade(player,npc,trade)
             player:startEvent(0x0038);
         end
     end
-    
+
 end;
 
 -----------------------------------
@@ -36,8 +36,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -45,13 +45,13 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x0038) then
         player:tradeComplete();
         player:setVar("TheHolyCrest_Event",5);
         player:startEvent(0x0021);
     end
-    
+
 end;

@@ -33,7 +33,13 @@ function onSpellCast(caster,target,spell)
 
     local typeEffect = EFFECT_FROST;
     local dINT = caster:getStat(MOD_INT)-target:getStat(MOD_INT);
-    local resist = applyResistance(caster,spell,target,dINT,BLUE_SKILL,0);
+    local params = {};
+    params.diff = nil;
+    params.attribute = MOD_INT;
+    params.skillType = BLUE_SKILL;
+    params.bonus = 0;
+    params.effect = nil;
+    resist = applyResistance(caster, target, spell, params);
 
     if (target:getStatusEffect(EFFECT_BURN) ~= nil) then
         spell:setMsg(75); -- no effect
@@ -58,7 +64,7 @@ function onSpellCast(caster,target,spell)
             end;
                 spell:setMsg(237);
             local duration = math.floor(ELEMENTAL_DEBUFF_DURATION * resist);
-            target:addStatusEffect(typeEffect,DOT,3,ELEMENTAL_DEBUFF_DURATION,FLAG_ERASBLE);
+            target:addStatusEffect(typeEffect,DOT,3,ELEMENTAL_DEBUFF_DURATION,FLAG_ERASABLE);
         end;
     else
         spell:setMsg(85);

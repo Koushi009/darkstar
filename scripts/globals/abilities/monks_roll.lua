@@ -21,20 +21,22 @@
 -- 11          |+40     |+50
 -- Bust        |-11     |-11
 -----------------------------------
-
 require("scripts/globals/settings");
-require("scripts/globals/status");
 require("scripts/globals/ability");
+require("scripts/globals/status");
+require("scripts/globals/msg");
 
 -----------------------------------
 -- onAbilityCheck
 -----------------------------------
 
 function onAbilityCheck(player,target,ability)
-    local effectID = getCorsairRollEffect(ability:getID());
+    local effectID = EFFECT_MONKS_ROLL
     ability:setRange(ability:getRange() + player:getMod(MOD_ROLL_RANGE));
-    if (player:hasStatusEffect(effectID) or player:hasBustEffect(effectID)) then
-        return MSGBASIC_ROLL_ALREADY_ACTIVE,0;
+    if (player:hasStatusEffect(effectID)) then
+        return msgBasic.ROLL_ALREADY_ACTIVE,0;
+    elseif atMaxCorsairBusts(player) then
+        return msgBasic.CANNOT_PERFORM,0;
     else
         return 0,0;
     end
@@ -46,7 +48,7 @@ end;
 
 function onUseAbility(caster,target,ability,action)
     if (caster:getID() == target:getID()) then
-        corsairSetup(caster, ability, action, EFFECT_MONKS_ROLL, JOB_MNK);
+        corsairSetup(caster, ability, action, EFFECT_MONKS_ROLL, JOBS.MNK);
     end
     local total = caster:getLocalVar("corsairRollTotal")
     return applyRoll(caster,target,ability,action,total)
@@ -59,9 +61,9 @@ function applyRoll(caster,target,ability,action,total)
     if (caster:getLocalVar("corsairRollBonus") == 1 and total < 12) then
         effectpower = effectpower + 10
     end
-    if (caster:getMainJob() == JOB_COR and caster:getMainLvl() < target:getMainLvl()) then
+    if (caster:getMainJob() == JOBS.COR and caster:getMainLvl() < target:getMainLvl()) then
         effectpower = effectpower * (caster:getMainLvl() / target:getMainLvl());
-    elseif (caster:getSubJob() == JOB_COR and caster:getSubLvl() < target:getMainLvl()) then
+    elseif (caster:getSubJob() == JOBS.COR and caster:getSubLvl() < target:getMainLvl()) then
         effectpower = effectpower * (caster:getSubLvl() / target:getMainLvl());
     end
     if (target:addCorsairRoll(caster:getMainJob(), caster:getMerit(MERIT_BUST_DURATION), EFFECT_MONKS_ROLL, effectpower, 0, duration, caster:getID(), total, MOD_SUBTLE_BLOW) == false) then

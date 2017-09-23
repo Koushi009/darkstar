@@ -127,7 +127,7 @@ CEntityUpdatePacket::CEntityUpdatePacket(CBaseEntity* PEntity, ENTITYUPDATE type
                     if (PMob->PMaster != nullptr && PMob->PMaster->objtype == TYPE_PC)
                         WBUFB(data, (0x27)) |= 0x08;
                     WBUFB(data, (0x28)) |= (PMob->StatusEffectContainer->HasStatusEffect(EFFECT_TERROR) ? 0x10 : 0x00);
-                    WBUFB(data, (0x28)) = PMob->health.hp > 0 && PMob->animation == ANIMATION_DEATH ? 0x08 : 0;
+                    WBUFB(data, (0x28)) |= PMob->health.hp > 0 && PMob->animation == ANIMATION_DEATH ? 0x08 : 0;
                     WBUFB(data, (0x29)) = PEntity->allegiance;
                     WBUFB(data, (0x2B)) = PEntity->namevis;
                 }
@@ -140,7 +140,10 @@ CEntityUpdatePacket::CEntityUpdatePacket(CBaseEntity* PEntity, ENTITYUPDATE type
             {
                 //depending on size of name, this can be 0x20, 0x22, or 0x24
                 this->size = 0x24;
-                memcpy(data + (0x34), PEntity->GetName(), (PEntity->name.size() > 15 ? 15 : PEntity->name.size()));
+                if (PMob->packetName.empty())
+                    memcpy(data + (0x34), PEntity->GetName(), (PEntity->name.size() > 15 ? 15 : PEntity->name.size()));
+                else
+                    memcpy(data + (0x34), PMob->packetName.c_str(), (PMob->packetName.size() > 15 ? 15 : PMob->packetName.size()));
             }
         }
         break;

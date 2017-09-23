@@ -1,7 +1,7 @@
 -----------------------------------------
---    ID: 4213
---    Icarus Wing
---    Increases TP of the user by 100
+-- ID: 4213
+-- Icarus Wing
+-- Increases TP of the user by 100
 -----------------------------------------
 
 require("scripts/globals/status");
@@ -11,11 +11,11 @@ require("scripts/globals/status");
 -----------------------------------------
 
 function onItemCheck(target)
-local result = 0;
+    local result = 0;
     if (target:hasStatusEffect(EFFECT_MEDICINE) == true) then
         result = 111;
     end
-return result;
+    return result;
 end;
 
 -----------------------------------------
@@ -23,6 +23,6 @@ end;
 -----------------------------------------
 
 function onItemUse(target)
-    target:addTP(100);
+    target:addTP(1000);
     target:addStatusEffect(EFFECT_MEDICINE,0,0,7200);
 end;

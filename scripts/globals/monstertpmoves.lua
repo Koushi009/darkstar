@@ -1,7 +1,8 @@
-require("scripts/globals/magic");
 require("scripts/globals/magicburst")
-require("scripts/globals/status")
+require("scripts/globals/status");
+require("scripts/globals/magic");
 require("scripts/globals/utils")
+require("scripts/globals/msg");
 
 -- Foreword: A lot of this is good estimating since the FFXI playerbase has not found all of info for individual moves.
 --            What is known is that they roughly follow player Weaponskill calculations (pDIF, dMOD, ratio, etc) so this is what
@@ -65,28 +66,6 @@ TP_MAB_BONUS = 2;
 TP_DMG_BONUS = 3;
 TP_RANGED = 4;
 
-MSG_NONE = 0; -- display nothing
-MSG_USES = 101; -- simple uses message
-MSG_FAMILIAR = 108;
-MSG_SELF_HEAL = 238;
-MSG_ENFEEB_IS = 242; --XXX is petrified.
-MSG_ENFEEB = 243; --XXX receives the effect of petrification.
-MSG_BUFF = 186;
-MSG_DRAIN_HP = 187;
-MSG_DRAIN_MP = 225;
-MSG_DRAIN_TP = 226;
-MSG_NO_EFFECT = 189;
-MSG_SHADOW = 31;
-MSG_ANTICIPATE = 30;
-MSG_DAMAGE = 185; -- player uses, target takes 10 damage. DEFAULT
-MSG_MISS = 188;
-MSG_RESIST = 85;
-MSG_EFFECT_DRAINED = 370; -- <num> status effects are drained from <target>.
-MSG_ATTR_DRAINED = 369;
-MSG_TP_REDUCED = 362; -- tp reduced to
-MSG_DISAPPEAR = 159; -- <target>'s stun effect disappears!
-MSG_DISAPPEAR_NUM = 231; -- <num> of <target>'s effects disappear!
-
 BOMB_TOSS_HPP = 1;
 
 function MobRangedMove(mob,target,skill,numberofhits,accmod,dmgmod, tpeffect)
@@ -125,6 +104,10 @@ function MobPhysicalMove(mob,target,skill,numberofhits,accmod,dmgmod,tpeffect,mt
     local lvltarget = target:getMainLvl();
     local acc = mob:getACC();
     local eva = target:getEVA();
+    if (target:hasStatusEffect(EFFECT_YONIN) and mob:isFacing(target, 23)) then -- Yonin evasion boost if mob is facing target
+        eva = eva + target:getStatusEffect(EFFECT_YONIN):getPower();
+    end
+
     --apply WSC
     local base = mob:getWeaponDmg() + dstr; --todo: change to include WSC
     if (base < 1) then
@@ -145,7 +128,7 @@ function MobPhysicalMove(mob,target,skill,numberofhits,accmod,dmgmod,tpeffect,mt
 
     ratio = ratio + lvldiff * 0.05;
     ratio = utils.clamp(ratio, 0, 4);
-    
+
     --work out hit rate for mobs (bias towards them)
     local hitrate = (acc*accmod) - eva + (lvldiff*2) + 75;
 
@@ -161,13 +144,13 @@ function MobPhysicalMove(mob,target,skill,numberofhits,accmod,dmgmod,tpeffect,mt
     hitdamage = hitdamage * dmgmod;
 
     if (tpeffect == TP_DMG_VARIES) then
-        hitdamage = hitdamage * MobTPMod(skill:getTP());
+        hitdamage = hitdamage * MobTPMod(skill:getTP() / 10);
     end
 
     --work out min and max cRatio
     local maxRatio = 1;
     local minRatio = 0;
-    
+
     if (ratio < 0.5) then
         maxRatio = ratio + 0.5;
     elseif ((0.5 <= ratio) and (ratio <= 0.7)) then
@@ -180,10 +163,10 @@ function MobPhysicalMove(mob,target,skill,numberofhits,accmod,dmgmod,tpeffect,mt
         maxRatio = ratio + 0.375;
     elseif ((2.625 < ratio) and (ratio <= 3.25)) then
         maxRatio = 3;
-    else 
+    else
         maxRatio = ratio;
     end
-    
+
 
     if (ratio < 0.38) then
         minRatio =  0;
@@ -251,7 +234,7 @@ function MobPhysicalMove(mob,target,skill,numberofhits,accmod,dmgmod,tpeffect,mt
     if (hitslanded == 0 or finaldmg == 0) then
         finaldmg = 0;
         hitslanded = 0;
-        skill:setMsg(MSG_MISS);
+        skill:setMsg(msgBasic.MISS);
     end
 
     returninfo.dmg = finaldmg;
@@ -287,9 +270,13 @@ function MobMagicalMove(mob,target,skill,damage,element,dmgmod,tpeffect,tpvalue)
     --get all the stuff we need
     local resist = 1;
 
+    local mdefBarBonus = 0;
+    if (element > 0 and element <= 6 and target:hasStatusEffect(barSpells[element])) then -- bar- spell magic defense bonus
+        mdefBarBonus = target:getStatusEffect(barSpells[element]):getSubPower();
+    end
     -- plus 100 forces it to be a number
-    mab = (100+mob:getMod(MOD_MATT)) / (100+target:getMod(MOD_MDEF));
-    
+    mab = (100 + mob:getMod(MOD_MATT)) / (100 + target:getMod(MOD_MDEF) + mdefBarBonus);
+
     if (mab > 1.3) then
         mab = 1.3;
     end
@@ -299,7 +286,7 @@ function MobMagicalMove(mob,target,skill,damage,element,dmgmod,tpeffect,tpvalue)
     end
 
     if (tpeffect==TP_DMG_BONUS) then
-        damage = damage * ((skill:getTP()*tpvalue)/100);
+        damage = damage * (((skill:getTP() / 10)*tpvalue)/100);
     end
 
     -- printf("power: %f, bonus: %f", damage, mab);
@@ -311,7 +298,7 @@ function MobMagicalMove(mob,target,skill,damage,element,dmgmod,tpeffect,tpvalue)
     if (mob:isPet() and mob:getMaster() ~= nil) then
         local master = mob:getMaster();
         if (master:getPetID() >= 0 and master:getPetID() <= 20) then -- check to ensure pet is avatar
-            avatarAccBonus = utils.clamp(master:getSkillLevel(SKILL_SUM) - master:getMaxSkillLevel(mob:getMainLvl(), JOB_SMN, SUMMONING_SKILL), 0, 200);
+            avatarAccBonus = utils.clamp(master:getSkillLevel(SKILL_SUM) - master:getMaxSkillLevel(mob:getMainLvl(), JOBS.SMN, SUMMONING_SKILL), 0, 200);
         end
     end
     resist = applyPlayerResistance(mob,nil,target,mob:getStat(MOD_INT)-target:getStat(MOD_INT),avatarAccBonus,element);
@@ -403,7 +390,11 @@ function mobAddBonuses(caster, spell, target, dmg, ele)
 
     dmg = math.floor(dmg * burst);
 
-    mab = (100 + caster:getMod(MOD_MATT)) / (100 + target:getMod(MOD_MDEF)) ;
+    local mdefBarBonus = 0;
+    if (ele > 0 and ele <= 6 and target:hasStatusEffect(barSpells[ele])) then -- bar- spell magic defense bonus
+        mdefBarBonus = target:getStatusEffect(barSpells[ele]):getSubPower();
+    end
+    mab = (100 + caster:getMod(MOD_MATT)) / (100 + target:getMod(MOD_MDEF) + mdefBarBonus) ;
 
     dmg = math.floor(dmg * mab);
 
@@ -491,13 +482,13 @@ function MobFinalAdjustments(dmg,mob,skill,target,skilltype,skillparam,shadowbeh
     --handle pd
     if ((target:hasStatusEffect(EFFECT_PERFECT_DODGE) or target:hasStatusEffect(EFFECT_ALL_MISS) )
             and skilltype==MOBSKILL_PHYSICAL) then
-        skill:setMsg(MSG_MISS);
+        skill:setMsg(msgBasic.MISS);
         return 0;
     end
 
     -- set message to damage
     -- this is for AoE because its only set once
-    skill:setMsg(MSG_DAMAGE);
+    skill:setMsg(msgBasic.DAMAGE);
 
     --Handle shadows depending on shadow behaviour / skilltype
     if (shadowbehav ~= MOBPARAM_WIPE_SHADOWS and shadowbehav ~= MOBPARAM_IGNORE_SHADOWS) then --remove 'shadowbehav' shadows.
@@ -510,7 +501,7 @@ function MobFinalAdjustments(dmg,mob,skill,target,skilltype,skillparam,shadowbeh
 
         -- dealt zero damage, so shadows took hit
         if (dmg == 0) then
-            skill:setMsg(MSG_SHADOW);
+            skill:setMsg(msgBasic.SHADOW_ABSORB);
             return shadowbehav;
         end
 
@@ -526,7 +517,7 @@ function MobFinalAdjustments(dmg,mob,skill,target,skilltype,skillparam,shadowbeh
 
     --handle Third Eye using shadowbehav as a guide
     if (skilltype == MOBSKILL_PHYSICAL and utils.thirdeye(target)) then
-        skill:setMsg(MSG_ANTICIPATE);
+        skill:setMsg(msgBasic.ANTICIPATE);
         return 0;
     end
 
@@ -560,6 +551,7 @@ function MobFinalAdjustments(dmg,mob,skill,target,skilltype,skillparam,shadowbeh
     if (dmg > 0) then
         target:wakeUp();
         target:updateEnmityFromDamage(mob,dmg);
+        target:handleAfflatusMiseryDamage(dmg);
     end
 
     return dmg;
@@ -597,9 +589,8 @@ function MobDrainMove(mob, target, drainType, drain)
             target:delMP(drain);
             mob:addMP(drain);
 
-            return MSG_DRAIN_MP;
+            return msgBasic.DRAIN_MP;
         elseif (drainType == MOBDRAIN_TP) then
-
             -- can't go over limited tp
             if (target:getTP() < drain) then
                 drain = target:getTP();
@@ -608,7 +599,7 @@ function MobDrainMove(mob, target, drainType, drain)
             target:delTP(drain);
             mob:addTP(drain);
 
-            return MSG_DRAIN_TP;
+            return msgBasic.DRAIN_TP;
         elseif (drainType == MOBDRAIN_HP) then
             -- can't go over limited hp
             if (target:getHP() < drain) then
@@ -618,7 +609,7 @@ function MobDrainMove(mob, target, drainType, drain)
             target:delHP(drain);
             mob:addHP(drain);
 
-            return MSG_DRAIN_HP;
+            return msgBasic.DRAIN_HP;
         end
 
     else
@@ -629,10 +620,10 @@ function MobDrainMove(mob, target, drainType, drain)
         end
 
         target:delHP(drain);
-        return MSG_DAMAGE;
+        return msgBasic.DAMAGE;
     end
 
-    return MSG_NO_EFFECT;
+    return msgBasic.NO_EFFECT;
 end;
 
 function MobPhysicalDrainMove(mob, target, skill, drainType, drain)
@@ -640,7 +631,7 @@ function MobPhysicalDrainMove(mob, target, skill, drainType, drain)
         return MobDrainMove(mob, target, drainType, drain);
     end
 
-    return MSG_MISS;
+    return msgBasic.MISS;
 end;
 
 function MobDrainAttribute(mob, target, typeEffect, power, tick, duration)
@@ -664,16 +655,16 @@ function MobDrainAttribute(mob, target, typeEffect, power, tick, duration)
     if (positive ~= nil) then
         local results = MobStatusEffectMove(mob, target, typeEffect, power, tick, duration);
 
-        if (results == MSG_ENFEEB_IS) then
+        if (results == msgBasic.ENFEEB_IS) then
             mob:addStatusEffect(positive, power, tick, duration);
 
-            return MSG_ATTR_DRAINED;
+            return msgBasic.ATTR_DRAINED;
         end
 
-        return MSG_MISS;
+        return msgBasic.MISS;
     end
 
-    return MSG_NO_EFFECT;
+    return msgBasic.NO_EFFECT;
 end;
 
 function MobDrainStatusEffectMove(mob, target)
@@ -687,10 +678,10 @@ function MobDrainStatusEffectMove(mob, target)
             mob:addStatusEffect(effect:getType(), effect:getPower(), effect:getTickCount(), effect:getDuration());
         end
         -- add buff to myself
-        return MSG_EFFECT_DRAINED;
+        return msgBasic.EFFECT_DRAINED;
     end
 
-    return MSG_NO_EFFECT;
+    return msgBasic.NO_EFFECT;
 end;
 
 -- Adds a status effect to a target
@@ -707,12 +698,12 @@ function MobStatusEffectMove(mob, target, typeEffect, power, tick, duration)
             local totalDuration = utils.clamp(duration * resist, 1);
             target:addStatusEffect(typeEffect, power, tick, totalDuration);
 
-            return MSG_ENFEEB_IS;
+            return msgBasic.ENFEEB_IS;
         end
 
-        return MSG_MISS; -- resist !
+        return msgBasic.MISS; -- resist !
     end
-    return MSG_NO_EFFECT; -- no effect
+    return msgBasic.NO_EFFECT; -- no effect
 end;
 
 -- similar to status effect move except, this will not land if the attack missed
@@ -722,7 +713,7 @@ function MobPhysicalStatusEffectMove(mob, target, skill, typeEffect, power, tick
         return MobStatusEffectMove(mob, target, typeEffect, power, tick, duration);
     end
 
-    return MSG_MISS;
+    return msgBasic.MISS;
 end;
 
 -- similar to statuseffect move except it will only take effect if facing
@@ -730,15 +721,15 @@ function MobGazeMove(mob, target, typeEffect, power, tick, duration)
     if (target:isFacing(mob)) then
         return MobStatusEffectMove(mob, target, typeEffect, power, tick, duration);
     end
-    return MSG_NO_EFFECT;
+    return msgBasic.NO_EFFECT;
 end;
 
 function MobBuffMove(mob, typeEffect, power, tick, duration)
 
     if (mob:addStatusEffect(typeEffect,power,tick,duration)) then
-        return MSG_BUFF;
+        return msgBasic.BUFF;
     end
-    return MSG_NO_EFFECT;
+    return msgBasic.NO_EFFECT;
 end;
 
 function MobHealMove(target, heal)
@@ -761,7 +752,7 @@ function MobTakeAoEShadow(mob, target, max)
 
     -- this is completely crap and should be using actual nin skill
     -- TODO fix this
-    if (target:getMainJob() == JOB_NIN and math.random() < 0.6) then
+    if (target:getMainJob() == JOBS.NIN and math.random() < 0.6) then
         max = max - 1;
         if (max < 1) then
             max = 1;
@@ -773,23 +764,23 @@ end;
 
 function MobTPMod(tp)
     -- increase damage based on tp
-    if (tp >= 300) then
+    if (tp >= 3000) then
         return 2;
-    elseif (tp >= 200) then
+    elseif (tp >= 2000) then
         return 1.5;
     end
     return 1;
 end;
 
 function fTP(tp,ftp1,ftp2,ftp3)
-    if (tp<100) then
-        tp=100;
+    if (tp < 1000) then
+        tp = 1000;
     end
-    if (tp>=100 and tp<150) then
-        return ftp1 + ( ((ftp2-ftp1)/50) * (tp-100));
-    elseif (tp>=150 and tp<=300) then
-        --generate a straight line between ftp2 and ftp3 and find point @ tp
-        return ftp2 + ( ((ftp3-ftp2)/150) * (tp-150));
+    if (tp >= 1000 and tp < 1500) then
+        return ftp1 + ( ((ftp2-ftp1)/500) * (tp-1000));
+    elseif (tp >= 1500 and tp <= 3000) then
+        -- generate a straight line between ftp2 and ftp3 and find point @ tp
+        return ftp2 + ( ((ftp3-ftp2)/1500) * (tp-1500));
     end
-    return 1; --no ftp mod
+    return 1; -- no ftp mod
 end;

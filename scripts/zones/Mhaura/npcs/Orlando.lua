@@ -1,12 +1,11 @@
 -----------------------------------
---  Area: Mhaura
+-- Area: Mhaura
 --  NPC:  Orlando
 --  Type: Standard NPC
---  @pos -37.268 -9 58.047 249
+-- !pos -37.268 -9 58.047 249
 -----------------------------------
 package.loaded["scripts/zones/Mhaura/TextIDs"] = nil;
 -----------------------------------
-
 require("scripts/zones/Mhaura/TextIDs");
 require("scripts/globals/keyitems");
 require("scripts/globals/settings");
@@ -18,7 +17,7 @@ require("scripts/globals/quests");
 
 function onTrade(player,npc,trade)
     local QuestStatus = player:getQuestStatus(OTHER_AREAS, ORLANDO_S_ANTIQUES);
-    local itemID = trade:getItem();
+    local itemID = trade:getItemId();
     local itemList =
     {
         {564, 200},   -- Fingernail Sack
@@ -33,7 +32,7 @@ function onTrade(player,npc,trade)
         {900, 100},   -- Fish Bone
         {16995, 150}, -- Rotten Meat
     };
- 
+
     for x, item in pairs(itemList) do
         if (QuestStatus == QUEST_ACCEPTED) or (player:getLocalVar("OrlandoRepeat") == 1) then
             if (item[1] == itemID) then
@@ -47,7 +46,7 @@ function onTrade(player,npc,trade)
                 end
             end
         end
-    end    
+    end
 end;
 
 -----------------------------------
@@ -56,7 +55,7 @@ end;
 
 function onTrigger(player,npc)
     local QuestStatus = player:getQuestStatus(OTHER_AREAS, ORLANDO_S_ANTIQUES);
-    
+
     if (player:getFameLevel(WINDURST) >= 2) then
         if (player:hasKeyItem(CHOCOBO_LICENSE)) then
             if (QuestStatus ~= QUEST_AVAILABLE) then
@@ -95,7 +94,7 @@ function onEventFinish(player,csid,option)
         player:addQuest(OTHER_AREAS, ORLANDO_S_ANTIQUES);
     elseif (csid == 0x0066) then
         player:tradeComplete();
-        player:addFame(WINDURST,WIN_FAME*10);
+        player:addFame(WINDURST,10);
         player:addGil(payout);
         player:messageSpecial(GIL_OBTAINED,payout);
         player:completeQuest(OTHER_AREAS, ORLANDO_S_ANTIQUES);

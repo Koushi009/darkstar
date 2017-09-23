@@ -5,9 +5,9 @@
 -- Recast Time: 3:00 minutes (3:00 for Valoredge version)
 -- Duration: Instant
 -----------------------------------
-
 require("scripts/globals/settings");
 require("scripts/globals/status");
+require("scripts/globals/msg");
 
 -----------------------------------
 -- onAbilityCheck
@@ -15,7 +15,7 @@ require("scripts/globals/status");
 
 function onAbilityCheck(player,target,ability)
     if (player:getShieldSize() == 0) then
-        return MSGBASIC_REQUIRES_SHIELD,0;
+        return msgBasic.REQUIRES_SHIELD,0;
     else
         return 0,0;
     end
@@ -43,7 +43,7 @@ function onUseAbility(player, target, ability)
         damage = 90 + damage;
     end
 
-    if (player:getMainJob() ~= JOB_PLD) then
+    if (player:getMainJob() ~= JOBS.PLD) then
         damage = math.floor(damage / 2.5);
         chance = 60;
     else

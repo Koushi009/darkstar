@@ -15,7 +15,8 @@ require("scripts/globals/magic");
 
 function onAbilityCheck(player,target,ability)
     if (player:getWeaponSubSkillType(SLOT_RANGED) == 10 and
-        not player:hasStatusEffect(EFFECT_OVERLOAD)) then
+        not player:hasStatusEffect(EFFECT_OVERLOAD) and
+        player:getPet()) then
         return 0,0;
     else
         return 71,0;
@@ -35,12 +36,18 @@ function onUseAbility(player,target,ability)
 
     local overload = target:addBurden(ELE_WIND-1, burden);
 
+    if (overload ~= 0 and
+        (player:getMod(MOD_PREVENT_OVERLOAD) > 0 or player:getPet():getMod(MOD_PREVENT_OVERLOAD) > 0) and
+        player:delStatusEffectSilent(EFFECT_WATER_MANEUVER)) then
+        overload = 0;
+    end
+
     if (overload ~= 0) then
         target:removeAllManeuvers();
         target:addStatusEffect(EFFECT_OVERLOAD, 0, 0, overload);
     else
         local level;
-        if (target:getMainJob() == JOB_PUP) then
+        if (target:getMainJob() == JOBS.PUP) then
             level = target:getMainLvl()
         else
             level = target:getSubLvl()

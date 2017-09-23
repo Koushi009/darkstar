@@ -26,16 +26,16 @@ This file is part of DarkStar-server source code.
 #include "instance.h"
 
 #include "zone.h"
+#include "ai/ai_container.h"
 #include "entities/charentity.h"
 #include "lua/luautils.h"
 
 #include "../common/timer.h"
 
 
-CInstance::CInstance(CZone* zone, uint8 instanceid) : CZoneEntities(zone)
+CInstance::CInstance(CZone* zone, uint8 instanceid) : CZoneEntities(zone),
+    m_instanceid(instanceid)
 {
-    memset(&m_entryloc, 0, sizeof m_entryloc);
-
     LoadInstance();
 
     m_startTime = server_clock::now();
@@ -60,11 +60,6 @@ CInstance::~CInstance()
 uint8 CInstance::GetID()
 {
     return m_instanceid;
-}
-
-CZone* CInstance::GetZone()
-{
-    return m_zone;
 }
 
 uint32 CInstance::GetProgress()
@@ -93,7 +88,11 @@ void CInstance::LoadInstance()
         "start_x, "
         "start_y, "
         "start_z, "
-        "start_rot "
+        "start_rot, "
+        "music_day, "
+        "music_night, "
+        "battlesolo, "
+        "battlemulti "
         "FROM instance_list "
         "WHERE instanceid = %u "
         "LIMIT 1";
@@ -110,6 +109,10 @@ void CInstance::LoadInstance()
         m_entryloc.y = Sql_GetFloatData(SqlHandle, 4);
         m_entryloc.z = Sql_GetFloatData(SqlHandle, 5);
         m_entryloc.rotation = Sql_GetUIntData(SqlHandle, 6);
+        m_zone_music_override.m_songDay = Sql_GetUIntData(SqlHandle, 7);
+        m_zone_music_override.m_songNight = Sql_GetUIntData(SqlHandle, 8);
+        m_zone_music_override.m_bSongS = Sql_GetUIntData(SqlHandle, 9);
+        m_zone_music_override.m_bSongM = Sql_GetUIntData(SqlHandle, 10);
     }
     else
     {
@@ -153,7 +156,7 @@ duration CInstance::GetTimeLimit()
     return m_timeLimit;
 }
 
-time_point CInstance::GetLastTimeUpdate()
+duration CInstance::GetLastTimeUpdate()
 {
     return m_lastTimeUpdate;
 }
@@ -181,7 +184,7 @@ void CInstance::SetEntryLoc(float x, float y, float z, float rot)
     m_entryloc.rotation = rot;
 }
 
-void CInstance::SetLastTimeUpdate(time_point lastTime)
+void CInstance::SetLastTimeUpdate(duration lastTime)
 {
     m_lastTimeUpdate = lastTime;
 }
@@ -212,7 +215,7 @@ void CInstance::CheckTime(time_point tick)
 {
     if (m_lastTimeCheck + 1s <= tick && !Failed())
     {
-        luautils::OnInstanceTimeUpdate(m_zone, this, GetElapsedTime(tick).count());
+        luautils::OnInstanceTimeUpdate(GetZone(), this, std::chrono::duration_cast<std::chrono::milliseconds>(GetElapsedTime(tick)).count());
         m_lastTimeCheck = tick;
     }
 }
@@ -229,10 +232,26 @@ bool CInstance::CharRegistered(CCharEntity* PChar)
     return false;
 }
 
+void CInstance::ClearEntities()
+{
+    auto clearStates = [](auto& entity)
+    {
+        if (static_cast<CBattleEntity*>(entity.second)->isAlive())
+        {
+            entity.second->PAI->ClearStateStack();
+        }
+    };
+    std::for_each(m_charList.cbegin(), m_charList.cend(), clearStates);
+    std::for_each(m_mobList.cbegin(), m_mobList.cend(), clearStates);
+    std::for_each(m_petList.cbegin(), m_petList.cend(), clearStates);
+}
+
 void CInstance::Fail()
 {
     Cancel();
 
+    ClearEntities();
+    
     luautils::OnInstanceFailure(this);
 }
 
@@ -245,6 +264,8 @@ void CInstance::Complete()
 {
     m_status = INSTANCE_COMPLETE;
 
+    ClearEntities();
+
     luautils::OnInstanceComplete(this);
 }
 
@@ -256,4 +277,30 @@ bool CInstance::Completed()
 void CInstance::Cancel()
 {
     m_status = INSTANCE_FAILED;
+}
+
+bool CInstance::CheckFirstEntry(uint32 id)
+{
+    //insert returns a pair (iterator,inserted)
+    return m_enteredChars.insert(id).second;
+}
+
+uint8 CInstance::GetSoloBattleMusic()
+{
+    return m_zone_music_override.m_bSongS != (uint8)-1 ? m_zone_music_override.m_bSongS : GetZone()->GetSoloBattleMusic();
+}
+
+uint8 CInstance::GetPartyBattleMusic()
+{
+    return m_zone_music_override.m_bSongM != (uint8)-1 ? m_zone_music_override.m_bSongM : GetZone()->GetPartyBattleMusic();
+}
+
+uint8 CInstance::GetBackgroundMusicDay()
+{
+    return m_zone_music_override.m_songDay != (uint8)-1 ? m_zone_music_override.m_songDay : GetZone()->GetBackgroundMusicDay();
+}
+
+uint8 CInstance::GetBackgroundMusicNight()
+{
+    return m_zone_music_override.m_songNight != (uint8)-1 ? m_zone_music_override.m_songNight : GetZone()->GetBackgroundMusicNight();
 }

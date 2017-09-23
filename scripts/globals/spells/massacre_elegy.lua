@@ -1,5 +1,5 @@
 -----------------------------------------
--- Spell: Battlefield Elegy
+-- Spell: Massacre Elegy
 -----------------------------------------
 require("scripts/globals/status");
 require("scripts/globals/magic");
@@ -18,14 +18,16 @@ function onSpellCast(caster,target,spell)
     local pCHR = caster:getStat(MOD_CHR);
     local mCHR = target:getStat(MOD_CHR);
     local dCHR = (pCHR - mCHR);
-    local resm = applyResistance(caster,spell,target,dCHR,SINGING_SKILL,0);
-    if (resm < 0.5) then
-        spell:setMsg(85);--resist message
-        return 1;
-    end
+    local params = {};
+    params.diff = nil;
+    params.attribute = MOD_CHR;
+    params.skillType = SINGING_SKILL;
+    params.bonus = 0;
+    params.effect = EFFECT_ELEGY;
+    resm = applyResistanceEffect(caster, target, spell, params);
 
-    if (100 * math.random() < target:getMod(MOD_SLOWRES)) then
-        spell:setMsg(85); -- resisted spell
+    if (resm < 0.5) then
+        spell:setMsg(85); -- resist message
     else
         local iBoost = caster:getMod(MOD_ELEGY_EFFECT) + caster:getMod(MOD_ALL_SONGS_EFFECT);
         power = power + iBoost*10;
@@ -44,10 +46,7 @@ function onSpellCast(caster,target,spell)
         end
 
         -- Try to overwrite weaker elegy
-        if (canOverwrite(target, EFFECT_ELEGY, power)) then
-            -- overwrite them
-            target:delStatusEffect(EFFECT_ELEGY);
-            target:addStatusEffect(EFFECT_ELEGY,power,0,duration);
+        if (target:addStatusEffect(EFFECT_ELEGY,power,0,duration)) then
             spell:setMsg(237);
         else
             spell:setMsg(75); -- no effect

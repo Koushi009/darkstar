@@ -17,10 +17,6 @@ require("scripts/globals/conquest");
 -----------------------------------
 
 function onInitialize(zone)
-    local manuals = {17240513,17240514};
-
-    SetFieldManual(manuals);
-
     -- Kreutzet
     SetRespawnTime(17240413, 900, 10800);
 

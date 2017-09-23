@@ -1,7 +1,7 @@
 -----------------------------------
 -- Area: Misareaux Coast
 --  NPC: Dilapidated Gate
--- @pos 260 9 -435 25
+-- !pos 260 9 -435 25
 -----------------------------------
 package.loaded["scripts/zones/Misareaux_Coast/TextIDs"] = nil;
 -----------------------------------
@@ -29,9 +29,9 @@ function onTrigger(player,npc)
         if (player:getVar("Warder_Aglaia_KILL") == 1 and player:getVar("Warder_Euphrosyne_KILL") == 1 and player:getVar("Warder_Thalia_KILL") == 1) then
             player:startEvent(0x000A);
         elseif (GetMobAction(16879893) == 0 and GetMobAction(16879894) == 0 and GetMobAction(16879895) == 0) then
-            SpawnMob(16879893,180):updateClaim(player);
-            SpawnMob(16879894,180):updateClaim(player);
-            SpawnMob(16879895,180):updateClaim(player);
+            SpawnMob(16879893):updateClaim(player);
+            SpawnMob(16879894):updateClaim(player);
+            SpawnMob(16879895):updateClaim(player);
         else
             player:messageSpecial(DOOR_CLOSED);
         end

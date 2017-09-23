@@ -6,9 +6,17 @@
 require("scripts/globals/groundsofvalor");
 
 -----------------------------------
+-- onMobSpawn
+-----------------------------------
+
+function onMobSpawn(mob)
+    mob:setMobMod(MOBMOD_CHARMABLE, 1);
+end;
+
+-----------------------------------
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
-    checkGoVregime(ally,mob,805,1);
+function onMobDeath(mob, player, isKiller)
+    checkGoVregime(player,mob,805,1);
 end;

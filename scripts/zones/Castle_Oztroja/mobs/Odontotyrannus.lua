@@ -1,5 +1,5 @@
 -----------------------------------
--- @pos -78 23 -39 (88)
+-- !pos -78 23 -39 (88)
 -----------------------------------
 
 require("scripts/globals/settings");
@@ -14,5 +14,5 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
 end;

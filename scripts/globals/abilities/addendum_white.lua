@@ -13,9 +13,9 @@
 -- 70      |4       |1:00 minute
 -- 90      |5       |48 seconds
 -----------------------------------
-
 require("scripts/globals/settings");
 require("scripts/globals/status");
+require("scripts/globals/msg");
 
 -----------------------------------
 -- onAbilityCheck
@@ -23,7 +23,7 @@ require("scripts/globals/status");
 
 function onAbilityCheck(player,target,ability)
     if player:hasStatusEffect(EFFECT_ADDENDUM_WHITE) then
-        return MSGBASIC_EFFECT_ALREADY_ACTIVE, 0;
+        return msgBasic.EFFECT_ALREADY_ACTIVE, 0;
     end
     return 0,0;
 end;
@@ -40,7 +40,7 @@ function onUseAbility(player,target,ability)
     local skillbonus = player:getMod(MOD_LIGHT_ARTS_SKILL);
     local effectbonus = player:getMod(MOD_LIGHT_ARTS_EFFECT);
     local regenbonus = 0;
-    if (player:getMainJob() == JOB_SCH and player:getMainLvl() >= 20) then
+    if (player:getMainJob() == JOBS.SCH and player:getMainLvl() >= 20) then
         regenbonus = 3 * math.floor((player:getMainLvl() - 10) / 10);
     end
 

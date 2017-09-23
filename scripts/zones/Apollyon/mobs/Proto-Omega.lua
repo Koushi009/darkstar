@@ -9,6 +9,7 @@ require("scripts/zones/Apollyon/TextIDs");
 require("scripts/globals/titles");
 require("scripts/globals/status");
 require("scripts/globals/magic");
+require("scripts/globals/msg");
 
 
 -----------------------------------
@@ -87,7 +88,7 @@ function onAdditionalEffect(mob, player)
         if (player:hasStatusEffect(EFFECT_STUN) == false) then
             player:addStatusEffect(EFFECT_STUN, 0, 0, duration);
         end
-        return SUBEFFECT_STUN, MSGBASIC_ADD_EFFECT_STATUS, EFFECT_STUN;
+        return SUBEFFECT_STUN, msgBasic.ADD_EFFECT_STATUS, EFFECT_STUN;
     end
 end;
 
@@ -95,8 +96,15 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
-    ally:addTitle(APOLLYON_RAVAGER);
+function onMobDeath(mob, player, isKiller)
+    player:addTitle(APOLLYON_RAVAGER);
+end;
+
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
     local mobX = mob:getXPos();
     local mobY = mob:getYPos();
     local mobZ = mob:getZPos();

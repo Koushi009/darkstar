@@ -2,8 +2,8 @@
 --  Area: Fort Karugo Narugo [S]
 --  NPC: ???
 --  Type: Quest
---  @zone: 96
---  @pos -63 -75 4
+--  @zone 96
+-- !pos -63 -75 4
 --
 -----------------------------------
 
@@ -23,7 +23,7 @@ end;
 -----------------------------------
 
 function onTrigger(player,npc)
-    
+
     if (player:getQuestStatus(CRYSTAL_WAR, THE_TIGRESS_STRIKES) == QUEST_ACCEPTED) then
         if (player:getVar("TigressStrikesProg") == 1) then
         player:startEvent(0x0066);
@@ -31,12 +31,12 @@ function onTrigger(player,npc)
             if (player:needToZone() and player:getVar("WarLynxKilled") == 1) then
                 player:startEvent(0x0067);
             else
-                SpawnMob(17170645,180):updateClaim(player);
+                SpawnMob(17170645):updateClaim(player);
             end
         end
     else
         player:messageSpecial(NOTHING_OUT_OF_ORDINARY);
-        
+
     end
 end;
 

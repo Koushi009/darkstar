@@ -27,7 +27,14 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
+function onMobDeath(mob, player, isKiller)
+end;
+
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
     -- Needs to be zone wide message
     -- mob:messagePublic(mob, YAGUDO_AVATAR_DEATH);
 
@@ -35,11 +42,11 @@ function onMobDeath(mob,killer,ally)
     local Tzee_Xicu_the_Manifest = 17396137;
     local ToD     = GetServerVariable("[POP]Tzee_Xicu_the_Manifest");
     local kills   = GetServerVariable("[PH]Tzee_Xicu_the_Manifest");
-    if (ToD <= os.time(t) and GetMobAction(Tzee_Xicu_the_Manifest) == 0) then
+    if (ToD <= os.time() and GetMobAction(Tzee_Xicu_the_Manifest) == 0) then
         if (math.random(1,5) == 3 or kills > 6) then
             UpdateNMSpawnPoint(Tzee_Xicu_the_Manifest);
             GetMobByID(Tzee_Xicu_the_Manifest):setRespawnTime(math.random((75600),(86400)));
-            DeterMob(Yagudo_Avatar, true);
+            DisallowRespawn(Yagudo_Avatar, true);
         end
     else
         UpdateNMSpawnPoint(Yagudo_Avatar);

@@ -1,20 +1,17 @@
 -----------------------------------
 -- Area: Bastok Mines
--- NPC:  Babenn
+--  NPC: Babenn
 -- Finishes Quest: The Eleventh's Hour
 -- Involved in Quests: Riding on the Clouds
--- @zone 234
--- @pos 73 -1 34
+-- !pos 73 -1 34 234
 -----------------------------------
 package.loaded["scripts/zones/Bastok_Mines/TextIDs"] = nil;
-package.loaded["scripts/globals/settings"] = nil;
 -----------------------------------
-
+require("scripts/zones/Bastok_Mines/TextIDs");
 require("scripts/globals/settings");
-require("scripts/globals/titles");
 require("scripts/globals/keyitems");
 require("scripts/globals/quests");
-require("scripts/zones/Bastok_Mines/TextIDs");
+require("scripts/globals/titles");
 
 -----------------------------------
 -- onTrade Action
@@ -52,8 +49,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID2: %u",csid);
---printf("RESULT2: %u",option);
+    -- printf("CSID2: %u",csid);
+    -- printf("RESULT2: %u",option);
 end;
 
 -----------------------------------
@@ -61,8 +58,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x002d) then
 
@@ -72,11 +69,10 @@ function onEventFinish(player,csid,option)
             player:addTitle(PURSUER_OF_THE_TRUTH);
             player:addItem(16629);
             player:messageSpecial(ITEM_OBTAINED,16629);
-            player:addFame(BASTOK,BAS_FAME*30);
+            player:addFame(BASTOK,30);
             player:completeQuest(BASTOK,THE_ELEVENTH_S_HOUR);
         else
             player:messageSpecial(ITEM_CANNOT_BE_OBTAINED, 16629);
         end
     end
-
 end;

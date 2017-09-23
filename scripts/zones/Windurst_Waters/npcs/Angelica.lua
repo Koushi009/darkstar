@@ -1,27 +1,24 @@
 -----------------------------------
---    Area: Windurst Waters
---    NPC: Angelica
---    Starts and Finished Quest: A Pose By Any Other Name
---    Working 100%
---  @zone = 238
---  @pos = -70 -10 -6
+-- Area: Windurst Waters
+--  NPC: Angelica
+-- Starts and Finished Quest: A Pose By Any Other Name
+-- !pos -70 -10 -6 238
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters/TextIDs"] = nil;
 -----------------------------------
-
-require("scripts/globals/status");
-require("scripts/globals/quests");
-require("scripts/globals/settings");
-require("scripts/globals/titles");
-require("scripts/globals/keyitems");
 require("scripts/zones/Windurst_Waters/TextIDs");
+require("scripts/globals/settings");
+require("scripts/globals/keyitems");
+require("scripts/globals/quests");
+require("scripts/globals/titles");
+require("scripts/globals/status");
 
 -----------------------------------
 -- onTrade Action
 -----------------------------------
 
 function onTrade(player,npc,trade)
-end;      
+end;
 
 -----------------------------------
 -- onTrigger Action
@@ -35,19 +32,19 @@ function onTrigger(player,npc)
     elseif (posestatus == QUEST_AVAILABLE and player:getVar("QuestAPoseByOtherName_prog") == 1) then
         player:setVar("QuestAPoseByOtherName_prog",2);
         mjob = player:getMainJob();
-        if (mjob == JOB_WAR or mjob == JOB_PLD or mjob == JOB_DRK or mjob == JOB_DRG or mjob == JOB_COR) then      -- Quest Start: Bronze Harness (War/Pld/Drk/Drg/Crs)
+        if (mjob == JOBS.WAR or mjob == JOBS.PLD or mjob == JOBS.DRK or mjob == JOBS.DRG or mjob == JOBS.COR) then      -- Quest Start: Bronze Harness (War/Pld/Drk/Drg/Crs)
             player:startEvent(0x005c,0,0,0,12576);
             player:setVar("QuestAPoseByOtherName_equip",12576);
-        elseif (mjob == JOB_MNK or mjob == JOB_BRD or mjob == JOB_BLU) then                             -- Quest Start: Robe (Mnk/Brd/Blu)
+        elseif (mjob == JOBS.MNK or mjob == JOBS.BRD or mjob == JOBS.BLU) then                             -- Quest Start: Robe (Mnk/Brd/Blu)
             player:startEvent(0x005c,0,0,0,12600);
             player:setVar("QuestAPoseByOtherName_equip",12600);
-        elseif (mjob == JOB_THF or mjob == JOB_BST or mjob == JOB_RNG or mjob == JOB_DNC) then             -- Quest Start: Leather Vest (Thf/Bst/Rng/Dnc)
+        elseif (mjob == JOBS.THF or mjob == JOBS.BST or mjob == JOBS.RNG or mjob == JOBS.DNC) then             -- Quest Start: Leather Vest (Thf/Bst/Rng/Dnc)
             player:startEvent(0x005c,0,0,0,12568);
             player:setVar("QuestAPoseByOtherName_equip",12568);
-        elseif (mjob == JOB_WHM or mjob == JOB_BLM or mjob == JOB_SMN or mjob == JOB_PUP or mjob == JOB_SCH) then     -- Quest Start: Tunic (Whm/Blm/Rdm/Smn/Pup/Sch)
+        elseif (mjob == JOBS.WHM or mjob == JOBS.BLM or mjob == JOBS.SMN or mjob == JOBS.PUP or mjob == JOBS.SCH) then     -- Quest Start: Tunic (Whm/Blm/Rdm/Smn/Pup/Sch)
             player:startEvent(0x005c,0,0,0,12608);
             player:setVar("QuestAPoseByOtherName_equip",12608);
-        elseif (mjob == JOB_SAM or mjob == JOB_NIN) then                                         -- Quest Start: Kenpogi(Sam/Nin) 
+        elseif (mjob == JOBS.SAM or mjob == JOBS.NIN) then                                         -- Quest Start: Kenpogi(Sam/Nin)
             player:startEvent(0x005c,0,0,0,12584);
             player:setVar("QuestAPoseByOtherName_equip",12584);
         end
@@ -55,7 +52,7 @@ function onTrigger(player,npc)
         starttime = player:getVar("QuestAPoseByOtherName_time");
         if ((starttime + 600) >= os.time()) then
             if (player:getEquipID(SLOT_BODY) == player:getVar("QuestAPoseByOtherName_equip")) then
-                player:startEvent(0x0060);     ------------------------------------------  QUEST FINISH 
+                player:startEvent(0x0060);     ------------------------------------------  QUEST FINISH
             else
                 player:startEvent(0x005d,0,0,0,player:getVar("QuestAPoseByOtherName_equip"));-- QUEST REMINDER
             end
@@ -73,16 +70,16 @@ function onTrigger(player,npc)
         else
             player:startEvent(0x0059); -------------------------------------------- Standard Conversation 3
         end
-    end    
-end; 
+    end
+end;
 
 -----------------------------------
 -- onEventUpdate
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -90,8 +87,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
     if (csid == 0x005c) then -------------------------- QUEST START
         player:addQuest(WINDURST,A_POSE_BY_ANY_OTHER_NAME);
         player:setVar("QuestAPoseByOtherName_time",os.time());
@@ -105,7 +102,7 @@ function onEventFinish(player,csid,option)
             player:messageSpecial(ITEM_OBTAINED,206);
             player:addKeyItem(ANGELICAS_AUTOGRAPH);
             player:messageSpecial(KEYITEM_OBTAINED,ANGELICAS_AUTOGRAPH);
-            player:addFame(WINDURST,WIN_FAME*75);
+            player:addFame(WINDURST,75);
             player:setVar("QuestAPoseByOtherName_time",0);
             player:setVar("QuestAPoseByOtherName_equip",0);
             player:setVar("QuestAPoseByOtherName_prog",0);

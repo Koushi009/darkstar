@@ -11,7 +11,7 @@ require("scripts/globals/status");
 require("scripts/globals/settings");
 require("scripts/globals/weaponskills");
 -----------------------------------
-function onUseWeaponSkill(player, target, wsID, tp, primary)
+function onUseWeaponSkill(player, target, wsID, tp, primary, action, taChar)
     local params = {};
     params.numHits = 4;
     -- ftp damage mods (for Damage Varies with TP; lines are calculated in the function
@@ -27,14 +27,13 @@ function onUseWeaponSkill(player, target, wsID, tp, primary)
     params.atkmulti = 1;
 
     if (USE_ADOULIN_WEAPON_SKILL_CHANGES == true) then
-        params.str_wsc = 0.30; params.mnd_wsc = 0.50;
+        params.str_wsc = 0.3; params.mnd_wsc = 0.5;
     end
 
-    local damage, criticalHit, tpHits, extraHits = doPhysicalWeaponskill(player, target, wsID, params, tp, primary);
+    local damage, criticalHit, tpHits, extraHits = doPhysicalWeaponskill(player, target, wsID, tp, primary, action, taChar, params);
 
     if (damage > 0) then
-        local tp = player:getTP();
-        local duration = (tp/100 * 30) + 30;
+        local duration = (tp/1000 * 30) + 30;
         if (target:hasStatusEffect(EFFECT_SILENCE) == false) then
             target:addStatusEffect(EFFECT_SILENCE, 1, 0, duration);
         end

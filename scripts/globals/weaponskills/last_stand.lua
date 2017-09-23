@@ -1,4 +1,5 @@
 -----------------------------------
+-- Last Stand
 -- Skill Level: 357
 -- Description: Attacks once or twice, depending on remaining ammunition. Damage dealt varies with TP.
 -- If the first shot of the weapon skill does enough damage to defeat the target, the second shot will not be used.
@@ -19,7 +20,7 @@ require("scripts/globals/settings");
 require("scripts/globals/weaponskills");
 -----------------------------------
 
-function onUseWeaponSkill(player, target, wsID, tp, primary)
+function onUseWeaponSkill(player, target, wsID, tp, primary, action, taChar)
 
     local params = {};
     params.numHits = 2;
@@ -38,7 +39,7 @@ function onUseWeaponSkill(player, target, wsID, tp, primary)
         params.agi_wsc = 0.7 + (player:getMerit(MERIT_LAST_STAND) / 100);
     end
 
-    local damage, criticalHit, tpHits, extraHits = doRangedWeaponskill(player, target, wsID, params, tp, primary);
+    local damage, criticalHit, tpHits, extraHits = doRangedWeaponskill(player, target, wsID, params, tp, primary, action);
     return tpHits, extraHits, criticalHit, damage;
 
 end;

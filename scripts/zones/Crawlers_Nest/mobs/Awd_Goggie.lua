@@ -1,7 +1,7 @@
 -----------------------------------
 -- Area: Crawler's Nest
 --  MOB: Awd Goggie
--- @pos -253.026 -1.867 253.055 197
+-- !pos -253.026 -1.867 253.055 197
 -----------------------------------
 
 require("scripts/globals/titles");
@@ -25,6 +25,6 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
-    ally:addTitle(BOGEYDOWNER);
+function onMobDeath(mob, player, isKiller)
+    player:addTitle(BOGEYDOWNER);
 end;

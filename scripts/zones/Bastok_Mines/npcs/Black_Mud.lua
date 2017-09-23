@@ -5,7 +5,6 @@
 -----------------------------------
 package.loaded["scripts/zones/Bastok_Mines/TextIDs"] = nil;
 -----------------------------------
-
 require("scripts/globals/quests");
 require("scripts/globals/settings");
 require("scripts/globals/titles");
@@ -59,8 +58,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID2: %u",csid);
---printf("RESULT2: %u",option);
+    -- printf("CSID2: %u",csid);
+    -- printf("RESULT2: %u",option);
 end;
 
 -----------------------------------
@@ -68,8 +67,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x0065) then
         Drachenfall = player:getQuestStatus(BASTOK,DRACHENFALL);
@@ -95,14 +94,12 @@ function onEventFinish(player,csid,option)
     elseif (csid == 0x0067) then
         player:tradeComplete();
         player:completeQuest(BASTOK,DRACHENFALL);
-        player:addFame(BASTOK,BAS_FAME*120); 
+        player:addFame(BASTOK,120); 
         player:addTitle(DRACHENFALL_ASCETIC);
         player:addGil(GIL_RATE*2000);
         player:messageSpecial(GIL_OBTAINED,GIL_RATE*2000);
     end
     
 end;
-
-
 
 

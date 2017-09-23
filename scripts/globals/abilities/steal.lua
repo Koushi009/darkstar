@@ -5,9 +5,9 @@
 -- Recast Time: 5:00
 -- Duration: Instant
 -----------------------------------
-
 require("scripts/globals/settings");
 require("scripts/globals/status");
+require("scripts/globals/msg");
 
 -- these are the quadavs that the thf af1 item can be stolen from
 -- bronze quadav groupid = 7949
@@ -33,7 +33,7 @@ validThfQuestMobs = {17379367,17379368,17379459,17379470,17379477,17379489,17379
 function onAbilityCheck(player,target,ability)
 
     if (player:getFreeSlotsCount() == 0) then
-        return MSGBASIC_FULL_INVENTORY,0;
+        return msgBasic.FULL_INVENTORY,0;
     else
         return 0,0;
     end
@@ -43,11 +43,11 @@ end;
 -- onUseAbility
 -----------------------------------
 
-function onUseAbility(player,target,ability)
+function onUseAbility(player,target,ability,action)
     local thfLevel;
     local stolen = 0;
 
-    if (player:getMainJob() == JOB_THF) then
+    if (player:getMainJob() == JOBS.THF) then
         thfLevel = player:getMainLvl();
     else
         thfLevel = player:getSubLvl();
@@ -68,6 +68,7 @@ function onUseAbility(player,target,ability)
         ability:setMsg(125); -- Item stolen successfully
     else
         ability:setMsg(153); -- Failed to steal
+        action:animation(target:getID(), 182);
     end
 
     return stolen;

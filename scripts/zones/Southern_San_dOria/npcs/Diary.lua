@@ -3,7 +3,7 @@
 -- NPC:  Diary
 -- Involved in Quest: To Cure a Cough
 -- @zone 230
--- @pos -75 -12 65
+-- !pos -75 -12 65
 -----------------------------------
 package.loaded["scripts/zones/Southern_San_dOria/TextIDs"] = nil;
 -----------------------------------
@@ -24,7 +24,7 @@ end;
 -----------------------------------
 
 function onTrigger(player,npc)
-    
+
     medicineWoman = player:getQuestStatus(SANDORIA,THE_MEDICINE_WOMAN);
     toCureaCough = player:getQuestStatus(SANDORIA,TO_CURE_A_COUGH);
 --    player:startEvent(0x02d2)  -- read page 4
@@ -35,16 +35,16 @@ function onTrigger(player,npc)
         player:startEvent(0x280);  -- diary page 2
     elseif (player:getVar("DiaryPage") >= 2 and medicineWoman == QUEST_COMPLETED) then
         player:startEvent(0x281);  -- read page 3
-    end 
-end; 
+    end
+end;
 
 -----------------------------------
 -- onEventUpdate
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -52,8 +52,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x027F and option == 0 ) then
         player:setVar("DiaryPage",1);    -- has read page 1

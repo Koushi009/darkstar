@@ -5,10 +5,10 @@
 -- Recast Time: 8 seconds
 -- Duration: Instant
 -----------------------------------
-
 require("scripts/globals/settings");
-require("scripts/globals/status");
 require("scripts/globals/ability");
+require("scripts/globals/status");
+require("scripts/globals/msg");
 
 -----------------------------------
 -- onAbilityCheck
@@ -17,7 +17,7 @@ require("scripts/globals/ability");
 function onAbilityCheck(player,target,ability)
     ability:setRange(ability:getRange() + player:getMod(MOD_ROLL_RANGE));
     if (not player:hasStatusEffect(EFFECT_DOUBLE_UP_CHANCE)) then
-        return MSGBASIC_NO_ELIGIBLE_ROLL,0;
+        return msgBasic.NO_ELIGIBLE_ROLL,0;
     else
         return 0,0;
     end
@@ -38,7 +38,6 @@ function onUseAbility(caster,target,ability,action)
         if (snake_eye) then
             if (prev_roll:getPower() > 5 and math.random(100) < snake_eye:getPower()) then
                 roll = 11
-                caster:resetRecast(RECAST_ABILITY, 193)
             else
                 roll = roll + 1
             end
@@ -50,6 +49,9 @@ function onUseAbility(caster,target,ability,action)
                 caster:delStatusEffectSilent(EFFECT_DOUBLE_UP_CHANCE)
             end
         end
+        if (roll == 11) then
+            caster:resetRecast(RECAST_ABILITY, 193)
+        end
         caster:setLocalVar("corsairRollTotal", roll)
         action:speceffect(caster:getID(),roll-prev_roll:getSubPower())
         checkForJobBonus(caster, job)
@@ -58,12 +60,14 @@ function onUseAbility(caster,target,ability,action)
     local prev_ability = getAbility(caster:getLocalVar("corsairActiveRoll"));
     if (prev_ability) then
         action:animation(target:getID(),prev_ability:getAnimation());
-        action:actionID(prev_ability:getID())
+        action:actionID(prev_ability:getID()+16)
         dofile("scripts/globals/abilities/"..prev_ability:getName()..".lua");
         local total = applyRoll(caster,target,ability,action,total)
-        local msg = action:messageID(target:getID())
-        if (msg == 422) then
-            action:messageID(target:getID(),425)
+        local msg = ability:getMsg()
+        if msg == 420 then
+            ability:setMsg(424)
+        elseif msg == 422 then
+            ability:setMsg(425)
         end
         return total;
     end

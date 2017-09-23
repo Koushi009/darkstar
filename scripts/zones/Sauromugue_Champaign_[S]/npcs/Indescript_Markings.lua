@@ -1,14 +1,14 @@
 -----------------------------------
 -- Area: Sauromugue Champaign [S]
 --  NPC: Indescript Markings
--- @pos 322 24 113
+-- !pos 322 24 113
 -- Quest NPC
 -----------------------------------
 package.loaded["scripts/zones/Sauromugue_Champaign_[S]/TextIDs"] = nil;
 -----------------------------------
 
-require("scripts/globals/campaign");
 require("scripts/zones/Sauromugue_Champaign_[S]/TextIDs");
+require("scripts/globals/campaign");
 require("scripts/globals/titles");
 require("scripts/globals/quests");
 require("scripts/globals/settings");
@@ -25,7 +25,7 @@ end;
 -----------------------------------
 
 function onTrigger(player,npc)
-    
+
     if (player:getQuestStatus(CRYSTAL_WAR, DOWNWARD_HELIX) == QUEST_ACCEPTED and player:getVar("DownwardHelix") == 3) then
         player:startEvent(0x0004);
     end

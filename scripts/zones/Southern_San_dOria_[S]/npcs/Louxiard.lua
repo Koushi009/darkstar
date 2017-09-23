@@ -1,10 +1,10 @@
 -----------------------------------
 -- Area: Southern SandOria [S]
--- NPC: Louxiard
--- @zone 80
--- @pos -93 -4 49
+--  NPC: Louxiard
+-- !pos -93 -4 49 80
 -----------------------------------
 package.loaded["scripts/zones/Southern_San_dOria_[S]/TextIDs"] = nil;
+-----------------------------------
 require("scripts/zones/Southern_San_dOria_[S]/TextIDs");
 require("scripts/globals/quests");
 
@@ -29,13 +29,13 @@ function onTrigger(player,npc)
 
     if (player:getCampaignAllegiance() > 0 and player:getQuestStatus(CRYSTAL_WAR,GIFTS_OF_THE_GRIFFON) == QUEST_AVAILABLE) then
         player:startEvent(0x015); -- Gifts of Griffon Quest Start
-        
+
     elseif (player:getQuestStatus(CRYSTAL_WAR,GIFTS_OF_THE_GRIFFON) == QUEST_ACCEPTED and player:getVar("GiftsOfGriffonProg") == 0) then
         player:startEvent(0x016); -- Gifts of Griffon Stage 2 Cutscene
-        
+
     elseif (player:getQuestStatus(CRYSTAL_WAR,GIFTS_OF_THE_GRIFFON) == QUEST_ACCEPTED and player:getVar("GiftsOfGriffonProg") == 1) then
         player:startEvent(0x027); -- Gifts of Griffon Stage 2 Dialogue
-    else    
+    else
         player:startEvent(0x025); -- Default Dialogue
     end
 end;
@@ -45,8 +45,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -54,14 +54,14 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
     if (csid == 0x015) then
         player:addQuest(CRYSTAL_WAR,GIFTS_OF_THE_GRIFFON); -- Gifts of Griffon Quest Start
-        
-    elseif (csid == 0x016) then 
+
+    elseif (csid == 0x016) then
         player:setVar("GiftsOfGriffonProg",1); -- Gifts of Griffon Stage 2
-        
+
     elseif (csid == 0x01A) then
         player:tradeComplete();
         local mask = player:getVar("GiftsOfGriffonPlumes");

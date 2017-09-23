@@ -2,9 +2,9 @@
 --  Area: Windurst Waters (S)
 --   NPC: Dhea Prandoleh
 --  Type: Standard NPC
--- @zone: 94
---  @pos 1 -1 15
--- 
+-- @zone 94
+-- !pos 1 -1 15
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters_[S]/TextIDs"] = nil;
@@ -36,7 +36,7 @@ function onTrigger(player,npc)
             player:startEvent(0x0083);
         elseif (player:getVar("TigressStrikesProg") == 3) then
             player:startEvent(0x0086);
-        end        
+        end
     else
         player:startEvent(0x0088);
     end

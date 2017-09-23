@@ -27,7 +27,7 @@
 #include "../../common/timer.h"
 #include "../../common/utils.h"
 #include "../ai/ai_container.h"
-#include "../ai/controllers/ai_controller.h"
+#include "../ai/controllers/mob_controller.h"
 #include "../ai/helpers/pathfind.h"
 #include "../ai/helpers/targetfind.h"
 #include "../ai/states/attack_state.h"
@@ -36,6 +36,7 @@
 #include "../entities/charentity.h"
 #include "../packets/action.h"
 #include "../packets/entity_update.h"
+#include "../packets/pet_sync.h"
 #include "../utils/battleutils.h"
 #include "../utils/blueutils.h"
 #include "../utils/charutils.h"
@@ -101,7 +102,9 @@ CMobEntity::CMobEntity()
 
     m_giveExp = false;
     m_neutral = false;
-    m_Aggro = AGGRO_NONE;
+    m_Aggro = false;
+    m_TrueDetection = false;
+    m_Detects = DETECT_NONE;
     m_Link = 0;
 
     m_battlefieldID = 0;
@@ -119,13 +122,18 @@ CMobEntity::CMobEntity()
     // For Dyna Stats
     m_StatPoppedMobs = false;
 
-    PAI = std::make_unique<CAIContainer>(this, std::make_unique<CPathFind>(this), std::make_unique<CAIController>(this),
+    PAI = std::make_unique<CAIContainer>(this, std::make_unique<CPathFind>(this), std::make_unique<CMobController>(this),
         std::make_unique<CTargetFind>(this));
 }
 
-void CMobEntity::setMobFlags(uint32 MobFlags)
+uint32 CMobEntity::getEntityFlags()
 {
-    m_flags = MobFlags;
+    return m_flags;
+}
+
+void CMobEntity::setEntityFlags(uint32 EntityFlags)
+{
+    m_flags = EntityFlags;
 }
 
 CMobEntity::~CMobEntity()
@@ -242,7 +250,7 @@ void CMobEntity::ResetGilPurse()
 
 bool CMobEntity::CanRoamHome()
 {
-    if (speed == 0 && !(m_roamFlags & ROAMFLAG_WORM)) return false;
+    if ((speed == 0 && !(m_roamFlags & ROAMFLAG_WORM)) || getMobMod(MOBMOD_NO_MOVE) > 0) return false;
 
     if (getMobMod(MOBMOD_NO_DESPAWN) != 0 ||
         map_config.mob_no_despawn)
@@ -255,7 +263,7 @@ bool CMobEntity::CanRoamHome()
 
 bool CMobEntity::CanRoam()
 {
-    return !(m_roamFlags & ROAMFLAG_EVENT) && PMaster == nullptr && (speed > 0 || (m_roamFlags & ROAMFLAG_WORM));
+    return !(m_roamFlags & ROAMFLAG_EVENT) && PMaster == nullptr && (speed > 0 || (m_roamFlags & ROAMFLAG_WORM)) && getMobMod(MOBMOD_NO_MOVE) == 0;
 }
 
 bool CMobEntity::CanLink(position_t* pos, int16 superLink)
@@ -272,14 +280,31 @@ bool CMobEntity::CanLink(position_t* pos, int16 superLink)
         return false;
     }
 
-    // link only if I see him
-    if ((m_Aggro & AGGRO_DETECT_SIGHT) || (m_Aggro & AGGRO_DETECT_TRUESIGHT)) {
-
-        if (!isFaceing(loc.p, *pos, 40)) return false;
+    // Don't link I'm an underground worm
+    if ((m_roamFlags & ROAMFLAG_WORM) && IsNameHidden())
+    {
+        return false;
     }
 
-    // link if close enough
-    return distance(loc.p, *pos) <= getMobMod(MOBMOD_LINK_RADIUS);
+    // link only if I see him
+    if (m_Detects & DETECT_SIGHT) {
+
+        if (!isFaceing(loc.p, *pos, 40))
+        {
+            return false;
+        }
+    }
+
+    if (distance(loc.p, *pos) > getMobMod(MOBMOD_LINK_RADIUS))
+    {
+        return false;
+    }
+
+    if (!PAI->PathFind->CanSeePoint(*pos))
+    {
+        return false;
+    }
+    return true;
 }
 
 /************************************************************************
@@ -348,7 +373,7 @@ uint8 CMobEntity::TPUseChance()
 {
     auto& MobSkillList = battleutils::GetMobSkillList(getMobMod(MOBMOD_SKILL_LIST));
 
-    if (health.tp < 1000 || MobSkillList.empty() == true || !static_cast<CAIController*>(PAI->GetController())->IsWeaponSkillEnabled())
+    if (health.tp < 1000 || MobSkillList.empty() == true || !static_cast<CMobController*>(PAI->GetController())->IsWeaponSkillEnabled())
     {
         return 0;
     }
@@ -410,35 +435,35 @@ void CMobEntity::HideModel(bool hide)
     {
         // I got this from ambush antlion
         // i'm not sure if this is right
-        m_flags |= 0x80;
+        m_flags |= FLAG_HIDE_MODEL;
     }
     else
     {
-        m_flags &= ~0x80;
+        m_flags &= ~FLAG_HIDE_MODEL;
     }
 }
 
 bool CMobEntity::IsModelHidden()
 {
-    return (m_flags & 0x80) == 0x80;
+    return m_flags & FLAG_HIDE_MODEL;
 }
 
 void CMobEntity::HideHP(bool hide)
 {
     if (hide)
     {
-        m_flags |= 0x100;
+        m_flags |= FLAG_HIDE_HP;
     }
     else
     {
-        m_flags &= ~0x100;
+        m_flags &= ~FLAG_HIDE_HP;
     }
     updatemask |= UPDATE_HP;
 }
 
 bool CMobEntity::IsHPHidden()
 {
-    return (m_flags & 0x100) == 0x100;
+    return m_flags & FLAG_HIDE_HP;
 }
 
 
@@ -446,36 +471,36 @@ void CMobEntity::CallForHelp(bool call)
 {
     if (call)
     {
-        m_flags |= 0x20;
+        m_flags |= FLAG_CALL_FOR_HELP;
     }
     else
     {
-        m_flags &= ~0x20;
+        m_flags &= ~FLAG_CALL_FOR_HELP;
     }
     updatemask |= UPDATE_HP;
 }
 
 bool CMobEntity::CalledForHelp()
 {
-    return (m_flags & 0x20) == 0x20;
+    return m_flags & FLAG_CALL_FOR_HELP;
 }
 
 void CMobEntity::Untargetable(bool untargetable)
 {
     if (untargetable)
     {
-        m_flags |= 0x800;
+        m_flags |= FLAG_UNTARGETABLE;
     }
     else
     {
-        m_flags &= ~0x800;
+        m_flags &= ~FLAG_UNTARGETABLE;
     }
     updatemask |= UPDATE_HP;
 }
 
 bool CMobEntity::IsUntargetable()
 {
-    return (m_flags & 0x800) == 0x800;
+    return m_flags & FLAG_UNTARGETABLE;
 }
 
 void CMobEntity::PostTick()
@@ -484,6 +509,13 @@ void CMobEntity::PostTick()
     if (loc.zone && updatemask)
     {
         loc.zone->PushPacket(this, CHAR_INRANGE, new CEntityUpdatePacket(this, ENTITY_UPDATE, updatemask));
+
+        // If this mob is charmed, it should sync with its master
+        if (PMaster && PMaster->PPet == this && PMaster->objtype == TYPE_PC)
+        {
+            ((CCharEntity*)PMaster)->pushPacket(new CPetSyncPacket((CCharEntity*)PMaster));
+        }
+
         updatemask = 0;
     }
 }
@@ -514,9 +546,14 @@ bool CMobEntity::ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags)
         return true;
     }
 
+    if ((targetFlags & TARGET_PLAYER) && allegiance == PInitiator->allegiance && !isCharmed)
+    {
+        return true;
+    }
+
     if (targetFlags & TARGET_NPC)
     {
-        if (allegiance == PInitiator->allegiance && !(m_Behaviour & BEHAVIOUR_NOHELP))
+        if (allegiance == PInitiator->allegiance && !(m_Behaviour & BEHAVIOUR_NOHELP) && !isCharmed)
         {
             return true;
         }
@@ -556,14 +593,6 @@ void CMobEntity::Spawn()
     // spawn somewhere around my point
     loc.p = m_SpawnPoint;
 
-    if (m_roamFlags & ROAMFLAG_AMBUSH)
-    {
-        HideName(true);
-        animationsub = 0;
-        // this will hide the mob
-        HideModel(true);
-    }
-
     if (m_roamFlags & ROAMFLAG_STEALTH)
     {
         HideName(true);
@@ -583,6 +612,7 @@ void CMobEntity::Spawn()
             }
         }
     }
+
     m_DespawnTimer = time_point::min();
     luautils::OnMobSpawn(this);
 }
@@ -593,8 +623,8 @@ void CMobEntity::OnWeaponSkillFinished(CWeaponSkillState& state, action_t& actio
 
     auto PSkill = state.GetSkill();
     auto PBattleTarget = static_cast<CBattleEntity*>(state.GetTarget());
-    PAI->EventHandler.triggerListener("WEAPONSKILL_USE", this, PSkill->getID());
-    //#TODO
+
+    static_cast<CMobController*>(PAI->GetController())->TapDeaggroTime();
 }
 
 
@@ -603,6 +633,7 @@ void CMobEntity::OnMobSkillFinished(CMobSkillState& state, action_t& action)
     auto PSkill = state.GetSkill();
     auto PTarget = static_cast<CBattleEntity*>(state.GetTarget());
 
+    static_cast<CMobController*>(PAI->GetController())->TapDeaggroTime();
 
     // store the skill used
     m_UsedSkillIds[PSkill->getID()] = GetMLevel();
@@ -623,7 +654,12 @@ void CMobEntity::OnMobSkillFinished(CMobSkillState& state, action_t& action)
     }
 
     action.id = id;
-    action.actiontype = objtype == TYPE_PET ? ACTION_PET_MOBABILITY_FINISH : PSkill->getID() < 256 ? ACTION_WEAPONSKILL_FINISH : ACTION_MOBABILITY_FINISH;
+    if (objtype == TYPE_PET && static_cast<CPetEntity*>(this)->getPetType() == PETTYPE_AVATAR)
+        action.actiontype = ACTION_PET_MOBABILITY_FINISH;
+    else if (PSkill->getID() < 256)
+        action.actiontype = ACTION_WEAPONSKILL_FINISH;
+    else
+        action.actiontype = ACTION_MOBABILITY_FINISH;
     action.actionid = PSkill->getID();
 
     if (PTarget && PAI->TargetFind->isWithinRange(&PTarget->loc.p, distance))
@@ -642,7 +678,10 @@ void CMobEntity::OnMobSkillFinished(CMobSkillState& state, action_t& action)
             PAI->TargetFind->findSingleTarget(PTarget, findFlags);
         }
     }
-    else
+
+    uint16 targets = PAI->TargetFind->m_targets.size();
+
+    if (!PTarget || targets == 0)
     {
         action.actiontype = ACTION_MOBABILITY_INTERRUPT;
         actionList_t& actionList = action.getNewActionList();
@@ -653,9 +692,7 @@ void CMobEntity::OnMobSkillFinished(CMobSkillState& state, action_t& action)
         return;
     }
 
-    uint16 actionsLength = PAI->TargetFind->m_targets.size();
-
-    PSkill->setTotalTargets(actionsLength);
+    PSkill->setTotalTargets(targets);
     PSkill->setTP(state.GetSpentTP());
     PSkill->setHPP(GetHPP());
 
@@ -681,14 +718,17 @@ void CMobEntity::OnMobSkillFinished(CMobSkillState& state, action_t& action)
         // reset the skill's message back to default
         PSkill->setMsg(defaultMessage);
 
-        if (objtype == TYPE_PET)
+        if (objtype == TYPE_PET && static_cast<CPetEntity*>(this)->getPetType() != PETTYPE_JUG_PET)
         {
-            target.animation = PSkill->getPetAnimationID();
+            if(static_cast<CPetEntity*>(this)->getPetType() == PETTYPE_AVATAR || static_cast<CPetEntity*>(this)->getPetType() == PETTYPE_WYVERN)
+            {
+                target.animation = PSkill->getPetAnimationID();
+            }
             target.param = luautils::OnPetAbility(PTarget, this, PSkill, PMaster, &action);
         }
         else
         {
-            target.param = luautils::OnMobWeaponSkill(PTarget, this, PSkill);
+            target.param = luautils::OnMobWeaponSkill(PTarget, this, PSkill, &action);
         }
 
         if (msg == 0)
@@ -718,15 +758,15 @@ void CMobEntity::OnMobSkillFinished(CMobSkillState& state, action_t& action)
         {
             target.speceffect = SPECEFFECT_RECOIL;
             target.knockback = PSkill->getKnockback();
-            if (first && (PSkill->getSkillchain() != 0))
+            if (first && (PSkill->getPrimarySkillchain() != 0))
             {
-                CWeaponSkill* PWeaponSkill = battleutils::GetWeaponSkill(PSkill->getSkillchain());
-                if (PWeaponSkill)
+                if (PSkill->getPrimarySkillchain())
                 {
-                    SUBEFFECT effect = battleutils::GetSkillChainEffect(PTarget, PWeaponSkill);
+                    SUBEFFECT effect = battleutils::GetSkillChainEffect(PTarget, PSkill->getID(), { static_cast<SKILLCHAIN_ELEMENT>(PSkill->getPrimarySkillchain()),
+                        static_cast<SKILLCHAIN_ELEMENT>(PSkill->getSecondarySkillchain(), static_cast<SKILLCHAIN_ELEMENT>(PSkill->getSecondarySkillchain())) } );
                     if (effect != SUBEFFECT_NONE)
                     {
-                        int32 skillChainDamage = battleutils::TakeSkillchainDamage(this, PTarget, target.param);
+                        int32 skillChainDamage = battleutils::TakeSkillchainDamage(this, PTarget, target.param, nullptr);
                         if (skillChainDamage < 0)
                         {
                             target.addEffectParam = -skillChainDamage;
@@ -779,7 +819,7 @@ void CMobEntity::DropItems()
                     uint8 bonus = (m_THLvl > 2 ? (m_THLvl - 2) * 10 : 0);
                     while (tries < maxTries)
                     {
-                        if (dsprand::GetRandomNumber(1000) < DropList->at(i).DropRate * map_config.drop_rate_multiplier + bonus)
+                        if (DropList->at(i).DropRate > 0 && dsprand::GetRandomNumber(1000) < DropList->at(i).DropRate * map_config.drop_rate_multiplier + bonus)
                         {
                             PChar->PTreasurePool->AddItem(DropList->at(i).ItemID, this);
                             break;
@@ -822,7 +862,7 @@ void CMobEntity::DropItems()
                 if (dsprand::GetRandomNumber(100) < 20 && PChar->PTreasurePool->CanAddSeal() && !getMobMod(MOBMOD_NO_DROPS))
                 {
                     //RULES: Only 1 kind may drop per mob
-                    if (GetMLevel() >= 75 && luautils::IsExpansionEnabled("ABYSSEA")) //all 4 types
+                    if (GetMLevel() >= 75 && luautils::IsContentEnabled("ABYSSEA")) //all 4 types
                     {
                         switch (dsprand::GetRandomNumber(4))
                         {
@@ -840,7 +880,7 @@ void CMobEntity::DropItems()
                                 break;
                         }
                     }
-                    else if (GetMLevel() >= 70 && luautils::IsExpansionEnabled("ABYSSEA")) //b.seal & k.seal & k.crest
+                    else if (GetMLevel() >= 70 && luautils::IsContentEnabled("ABYSSEA")) //b.seal & k.seal & k.crest
                     {
                         switch (dsprand::GetRandomNumber(3))
                         {
@@ -888,10 +928,41 @@ void CMobEntity::DropItems()
     }
 }
 
+
+bool CMobEntity::CanAttack(CBattleEntity* PTarget, std::unique_ptr<CBasicPacket>& errMsg)
+{
+    auto skill_list_id {getMobMod(MOBMOD_ATTACK_SKILL_LIST)};
+    if (skill_list_id)
+    {
+        auto attack_range {GetMeleeRange()};
+        auto skillList {battleutils::GetMobSkillList(skill_list_id)};
+        if (!skillList.empty())
+        {
+            auto skill {battleutils::GetMobSkill(skillList.front())};
+            if (skill)
+            {
+                attack_range = skill->getDistance();
+            }
+        }
+        if ((distance(loc.p, PTarget->loc.p) - PTarget->m_ModelSize) > attack_range ||
+            !PAI->GetController()->IsAutoAttackEnabled())
+        {
+            return false;
+        }
+        return true;
+    }
+    else
+    {
+        return CBattleEntity::CanAttack(PTarget, errMsg);
+    }
+}
+
 void CMobEntity::OnEngage(CAttackState& state)
 {
     CBattleEntity::OnEngage(state);
     luautils::OnMobEngaged(this, state.GetTarget());
+
+    static_cast<CMobController*>(PAI->GetController())->TapDeaggroTime();
 }
 
 void CMobEntity::FadeOut()
@@ -902,7 +973,17 @@ void CMobEntity::FadeOut()
 
 void CMobEntity::OnDeathTimer()
 {
-    PAI->Despawn();
+    if (!(m_Behaviour & BEHAVIOUR_RAISABLE))
+        PAI->Despawn();
+}
+
+void CMobEntity::OnDespawn(CDespawnState&)
+{
+    FadeOut();
+    PAI->Internal_Respawn(std::chrono::milliseconds(m_RespawnTime));
+    luautils::OnMobDespawn(this);
+    //#event despawn
+    PAI->EventHandler.triggerListener("DESPAWN", this);
 }
 
 void CMobEntity::Die()
@@ -917,7 +998,10 @@ void CMobEntity::Die()
     PAI->Internal_Die(15s);
     CBattleEntity::Die();
     PAI->QueueAction(queueAction_t(std::chrono::milliseconds(m_DropItemTime), false, [this](CBaseEntity* PEntity) {
-        DropItems();
+        if (static_cast<CMobEntity*>(PEntity)->isDead())
+        {
+            DropItems();
+        }
     }));
     if (PMaster && PMaster->PPet == this && PMaster->objtype == TYPE_PC)
     {
@@ -932,7 +1016,7 @@ void CMobEntity::OnDisengage(CAttackState& state)
 
     if (getMobMod(MOBMOD_IDLE_DESPAWN))
     {
-        SetDespawnTime(std::chrono::milliseconds(getMobMod(MOBMOD_IDLE_DESPAWN)));
+        SetDespawnTime(std::chrono::seconds(getMobMod(MOBMOD_IDLE_DESPAWN)));
     }
     // this will let me decide to walk home or despawn
     m_neutral = true;
@@ -943,4 +1027,25 @@ void CMobEntity::OnDisengage(CAttackState& state)
     CBattleEntity::OnDisengage(state);
 
     luautils::OnMobDisengage(this);
+}
+
+void CMobEntity::OnCastFinished(CMagicState& state, action_t& action)
+{
+    CBattleEntity::OnCastFinished(state, action);
+
+    static_cast<CMobController*>(PAI->GetController())->TapDeaggroTime();
+}
+
+bool CMobEntity::OnAttack(CAttackState& state, action_t& action)
+{
+    static_cast<CMobController*>(PAI->GetController())->TapDeaggroTime();
+
+    if (getMobMod(MOBMOD_ATTACK_SKILL_LIST))
+    {
+        return static_cast<CMobController*>(PAI->GetController())->MobSkill(getMobMod(MOBMOD_ATTACK_SKILL_LIST));
+    }
+    else
+    {
+        return CBattleEntity::OnAttack(state, action);
+    }
 }

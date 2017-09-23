@@ -2,10 +2,10 @@
 -- Area: Konschtat Highlands
 --  NM:  Ghillie Dhu
 -----------------------------------
-
-require("scripts/globals/utils");
-require("scripts/globals/status");
 require("scripts/globals/fieldsofvalor");
+require("scripts/globals/status");
+require("scripts/globals/utils");
+require("scripts/globals/msg");
 
 -----------------------------------
 -- onMobInitialize
@@ -58,9 +58,9 @@ function onAdditionalEffect(mob,target,damage)
     -- wiki just says "29%" so thats what I am using (for now).
     local CHANCE = 29;
     if (CHANCE > math.random(0,99)) then
-        local DRAIN = math.random(1,3); -- Its a pretty weaksauce drain.
+        local DRAIN = math.random(10,30); -- Its a pretty weaksauce drain.
         target:delTP(DRAIN);
-        return SUBEFFECT_TP_DRAIN, MSGBASIC_ADD_EFFECT_TP_DRAIN, DRAIN;
+        return SUBEFFECT_TP_DRAIN, msgBasic.ADD_EFFECT_TP_DRAIN, DRAIN;
     else
         return 0,0,0;
     end
@@ -70,9 +70,16 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
+function onMobDeath(mob, player, isKiller)
     -- I think he still counts for the FoV page? Most NM's do not though.
-    checkRegime(ally,mob,81,1);
+    checkRegime(player,mob,81,1);
+end;
+
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
 
     UpdateNMSpawnPoint(mob:getID());
     mob:setRespawnTime(math.random(3600,4200)); -- 60~70 min repop.

@@ -1,7 +1,7 @@
 -----------------------------------
 -- Area: Crawlers Nest
 --  MOB: Queen Crawler
--- @pos -337.156 -3.607 -253.294 197
+-- !pos -337.156 -3.607 -253.294 197
 -----------------------------------
 
 
@@ -24,5 +24,5 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
+function onMobDeath(mob, player, isKiller)
 end;

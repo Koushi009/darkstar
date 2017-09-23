@@ -3,12 +3,14 @@
 -- NPC: Ojha Rhawash
 -- Starts and Finishes Quest: Flower Child
 -- @zone 239
--- @pos -209 0 -134
------------------------------------
+-- !pos -209 0 -134
 
+-----------------------------------
+package.loaded["scripts/zones/Windurst_Walls/TextIDs"] = nil;
+-----------------------------------
+require("scripts/zones/Windurst_Walls/TextIDs");
 require("scripts/globals/settings");
 require("scripts/globals/quests");
-require("scripts/zones/Windurst_Walls/TextIDs");
 
 
 -----------------------------------
@@ -53,7 +55,7 @@ itemQuality = 0;
     if (itemQuality == 2) then
         if (FlowerChild == QUEST_COMPLETED) then
             player:startEvent(0x2710, 0, 239, 4);
-        else 
+        else
             player:startEvent(0x2710, 0, 239, 2);
         end
     elseif (itemQuality == 1) then
@@ -61,14 +63,14 @@ itemQuality = 0;
             player:startEvent(0x2710, 0, 239, 5);
         elseif (FlowerChild == QUEST_ACCEPTED) then
             player:startEvent(0x2710, 0, 239, 3);
-        else 
+        else
             player:startEvent(0x2710, 0, 239, 1);
         end
-    else 
+    else
         player:startEvent(0x2710, 0, 239, 0);
     end
 
-end; 
+end;
 
 
 -----------------------------------
@@ -77,7 +79,7 @@ end;
 
 function onTrigger(player,npc)
     player:startEvent(0x2710, 0, 239, 10);
-end; 
+end;
 
 
 -----------------------------------
@@ -85,8 +87,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 
@@ -95,13 +97,13 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x2710 and option == 3002) then
         player:tradeComplete();
         player:completeQuest(WINDURST,FLOWER_CHILD);
-        player:addFame(WINDURST,WIN_FAME*120);
+        player:addFame(WINDURST,120);
         player:moghouseFlag(4);
         player:messageSpecial(MOGHOUSE_EXIT);
     elseif (csid == 0x2710 and option == 1) then

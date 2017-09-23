@@ -3,9 +3,9 @@
 -- Item: Estramacon
 -- Additional Effect: TP Drain
 -----------------------------------------
-
 require("scripts/globals/status");
 require("scripts/globals/magic");
+require("scripts/globals/msg");
 
 -----------------------------------
 -- onAdditionalEffect Action
@@ -16,7 +16,7 @@ function onAdditionalEffect(player,target,damage)
     if (math.random(0,99) >= chance) then
         return 0,0,0;
     else
-        local TpDrain = math.random(1,3);
+        local TpDrain = math.random(10,30);
 
         if (TpDrain > target:getTP()) then
             TpDrain = target:getTP();
@@ -25,6 +25,6 @@ function onAdditionalEffect(player,target,damage)
         target:addTP(-TpDrain);
         player:addTP(TpDrain);
 
-        return SUBEFFECT_TP_DRAIN, MSGBASIC_ADD_EFFECT_TP_DRAIN, TpDrain;
+        return SUBEFFECT_TP_DRAIN, msgBasic.ADD_EFFECT_TP_DRAIN, TpDrain;
     end
 end;

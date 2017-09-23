@@ -2,8 +2,8 @@
 --  Area: Norg
 --   NPC: Fouvia
 --  Type: Wyvern Name Changer
--- @zone: 252
---  @pos -84.066 -6.414 47.826
+-- @zone 252
+-- !pos -84.066 -6.414 47.826
 -----------------------------------
 package.loaded["scripts/zones/Norg/TextIDs"] = nil;
 -----------------------------------
@@ -24,7 +24,7 @@ end;
 -----------------------------------
 
 function onTrigger(player,npc)
-   if (player:getMainJob() ~= JOB_DRG) then
+   if (player:getMainJob() ~= JOBS.DRG) then
       player:showText(npc,FOUIVA_DIALOG); -- Oi 'av naw business wi' de likes av you.
    elseif (player:getGil() < 9800) then
       player:showText(npc,FOUIVA_DIALOG + 9); -- You don't 'av enough gil.  Come back when you do.

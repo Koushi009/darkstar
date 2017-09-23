@@ -2,7 +2,7 @@
 -- Area: Garlaige Citadel
 -- NPC:  Oaken Box
 -- Involved In Quest: Peace for the Spirit
--- @pos -164 0.1 225 200
+-- !pos -164 0.1 225 200
 -----------------------------------
 package.loaded["scripts/zones/Garlaige_Citadel/TextIDs"] = nil;
 -----------------------------------
@@ -34,7 +34,7 @@ function onTrigger(player,npc)
 
     if (player:getVar("peaceForTheSpiritCS") == 4 and player:hasItem(1094) == false) then -- Nail Puller
         player:messageSpecial(SENSE_OF_FOREBODING);
-        SpawnMob(17596643,180):updateClaim(player);
+        SpawnMob(17596643):updateClaim(player);
     else
         player:messageSpecial(YOU_FIND_NOTHING);
     end
@@ -45,8 +45,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID2: %u",csid);
---printf("RESULT2: %u",option);
+    -- printf("CSID2: %u",csid);
+    -- printf("RESULT2: %u",option);
 end;
 
 -----------------------------------
@@ -54,8 +54,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x000e) then
         player:tradeComplete();

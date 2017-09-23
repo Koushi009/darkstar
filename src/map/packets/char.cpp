@@ -75,7 +75,6 @@ CCharPacket::CCharPacket(CCharEntity * PChar, ENTITYUPDATE type, uint8 updatemas
                 //{
                 //	WBUFB(data,(0x22)) = 0x20;
                 //}
-                WBUFB(data, 0x22) = 0x02;
 
                 if (PChar->StatusEffectContainer->HasStatusEffectByFlag(EFFECTFLAG_INVISIBLE))
                 {
@@ -97,6 +96,9 @@ CCharPacket::CCharPacket(CCharEntity * PChar, ENTITYUPDATE type, uint8 updatemas
                 }
 
                 WBUFB(data, (0x27)) = (PChar->isCharmed ? 0x08 : 0x00);
+                
+                WBUFB(data, (0x29)) = PChar->allegiance;
+                
                 // Mentor flag..
                 if (PChar->m_mentor >= 2)
                     WBUFB(data, (0x2B)) = 0x01;

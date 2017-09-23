@@ -1,10 +1,8 @@
 -----------------------------------
---    Area: Windurst Waters
---    NPC:  Foi-Mui
---  Involved in Quest: Making the Grade
---    Working 100% 
---  @zone = 238
---  @pos = 126 -6 162
+-- Area: Windurst Waters
+-- NPC:  Foi-Mui
+-- Involved in Quest: Making the Grade
+-- !pos 126 -6 162 238
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters/TextIDs"] = nil;
 -----------------------------------
@@ -32,15 +30,15 @@ function onTrigger(player,npc)
     else
         player:startEvent(0x01ae); -- Standard conversation
     end
-end; 
+end;
 
 -----------------------------------
 -- onEventUpdate
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -48,8 +46,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 

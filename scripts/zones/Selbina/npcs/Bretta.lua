@@ -1,12 +1,10 @@
 -----------------------------------
 -- Area: Selbina
--- NPC: Bretta
--- @zone
--- @pos
+--  NPC: Bretta
+-- !pos Poor Bretta lost in the depths of the database. Go find her.
 -----------------------------------
 package.loaded["scripts/zones/Selbina/TextIDs"] = nil;
 -----------------------------------
-
 require("scripts/zones/Selbina/TextIDs");
 
 -----------------------------------
@@ -24,7 +22,7 @@ function onTrigger(player,npc)
     if (player:getZPos() > -28.750) then
         player:startEvent(0x046d, 1152 - ((os.time() - 1009810584)%1152));
     else
-        player:startEvent(0x00de);  
+        player:startEvent(0x00de);
     end
 end;
 
@@ -33,8 +31,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -42,6 +40,6 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;

@@ -2,9 +2,9 @@
 --  Area: Port San d'Oria
 --   NPC: Maunadolace
 --  Type: Standard NPC
--- @zone: 232
---  @pos -22.800 -9.3 -148.645
--- 
+-- @zone 232
+-- !pos -22.800 -9.3 -148.645
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Port_San_dOria/TextIDs"] = nil;

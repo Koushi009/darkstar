@@ -2,11 +2,11 @@
 -- Area: Port San d'Oria
 -- NPC: Ceraulian
 -- Involved in Quest: The Holy Crest
--- @pos 0 -8 -122 232
+-- !pos 0 -8 -122 232
 -----------------------------------
 package.loaded["scripts/zones/Port_San_dOria/TextIDs"] = nil;
 -----------------------------------
-
+require("scripts/globals/status");
 require("scripts/globals/quests");
 require("scripts/globals/settings");
 require("scripts/globals/keyitems");
@@ -39,7 +39,7 @@ function onTrigger(player,npc)
         player:startEvent(0x0018);
 
     -- Chasing Quotas (DRG AF2)
-    elseif (Quotas_Status == QUEST_AVAILABLE and player:getMainJob() == 14 and player:getMainLvl() >= AF1_QUEST_LEVEL and Quotas_No == 0) then
+    elseif (Quotas_Status == QUEST_AVAILABLE and player:getMainJob() == JOBS.DRG and player:getMainLvl() >= AF1_QUEST_LEVEL and Quotas_No == 0) then
         player:startEvent(18); -- Long version of quest start
     elseif (Quotas_No == 1) then
         player:startEvent(14); -- Short version for those that said no.
@@ -80,7 +80,7 @@ function onTrigger(player,npc)
     else
         player:startEvent(0x024b);
     end
-    
+
 end;
 
 -----------------------------------
@@ -88,8 +88,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -97,8 +97,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x0018) then
         player:setVar("TheHolyCrest_Event",1);
@@ -120,13 +120,13 @@ function onEventFinish(player,csid,option)
         player:setVar("ChasingQuotas_Progress",2);
         player:setVar("ChasingQuotas_date",0);
     elseif (csid == 15) then
-        if (player:getFreeSlotsCount() < 1) then 
+        if (player:getFreeSlotsCount() < 1) then
             player:messageSpecial(ITEM_CANNOT_BE_OBTAINED,14227);
         else
             player:delKeyItem(RANCHURIOMES_LEGACY);
             player:addItem(14227);
             player:messageSpecial(ITEM_OBTAINED,14227); -- Drachen Brais
-            player:addFame(SANDORIA,AF2_FAME*SAN_FAME);
+            player:addFame(SANDORIA,AF2_FAME);
             player:completeQuest(SANDORIA,CHASING_QUOTAS);
             player:setVar("ChasingQuotas_Progress",0);
         end

@@ -2,7 +2,7 @@
 -- Area: Bastok Markets
 -- NPC: Harmodios
 -- Standard Merchant NPC
--- @pos -79.928 -4.824 -135.114 235
+-- !pos -79.928 -4.824 -135.114 235
 -----------------------------------
 package.loaded["scripts/zones/Bastok_Markets/TextIDs"] = nil;
 -----------------------------------
@@ -16,7 +16,7 @@ require("scripts/zones/Bastok_Markets/TextIDs");
 -----------------------------------
 
 function onTrade(player,npc,trade)
-end; 
+end;
 
 -----------------------------------
 -- onTrigger Action
@@ -49,18 +49,18 @@ function onTrigger(player,npc)
             0x43C1,    43,3,     --Flute
             0x13B5, 54000,3      --Scroll of Bewitching Etude
         }
-        showNationShop(player, BASTOK, stock);
+        showNationShop(player, NATION_BASTOK, stock);
 
     end;
-end; 
+end;
 
 -----------------------------------
 -- onEventUpdate
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -68,8 +68,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x01ae) then
         player:setMaskBit(player:getVar("WildcatBastok"),"WildcatBastok",10,true);

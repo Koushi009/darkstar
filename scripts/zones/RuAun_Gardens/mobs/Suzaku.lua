@@ -6,6 +6,7 @@ package.loaded["scripts/zones/RuAun_Gardens/TextIDs"] = nil;
 -----------------------------------
 require("scripts/zones/RuAun_Gardens/TextIDs");
 require("scripts/globals/status");
+require("scripts/globals/msg");
 
 -----------------------------------
 -- onMobInitialize
@@ -58,15 +59,15 @@ function onAdditionalEffect(mob, target, damage)
     dmg = adjustForTarget(target,dmg,ELE_FIRE);
     dmg = finalMagicNonSpellAdjustments(mob,target,ELE_FIRE,dmg);
 
-    return SUBEFFECT_FIRE_DAMAGE, MSGBASIC_ADD_EFFECT_DMG, dmg;
+    return SUBEFFECT_FIRE_DAMAGE, msgBasic.ADD_EFFECT_DMG, dmg;
 end;
 
 -----------------------------------
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
-    ally:showText(mob,SKY_GOD_OFFSET + 8);
+function onMobDeath(mob, player, isKiller)
+    player:showText(mob,SKY_GOD_OFFSET + 8);
 end;
 
 -----------------------------------

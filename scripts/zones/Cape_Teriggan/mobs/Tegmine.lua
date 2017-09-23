@@ -4,7 +4,7 @@
 -----------------------------------
 require("scripts/globals/status");
 require("scripts/globals/magic");
------------------------------------
+require("scripts/globals/msg");
 
 
 -----------------------------------
@@ -49,7 +49,7 @@ function onAdditionalEffect(mob,target,damage)
 
         dmg = finalMagicNonSpellAdjustments(mob,target,ELE_WATER,dmg);
 
-        return SUBEFFECT_WATER_DAMAGE, MSGBASIC_ADD_EFFECT_DMG, dmg;
+        return SUBEFFECT_WATER_DAMAGE, msgBasic.ADD_EFFECT_DMG, dmg;
     end
 
 end;
@@ -58,7 +58,14 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
+end;
+
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
     -- UpdateNMSpawnPoint(mob:getID());
     mob:setRespawnTime(math.random((7200),(7800))); -- 120 to 130 min
 end;

@@ -4,7 +4,7 @@
 -----------------------------------
 require("scripts/globals/status");
 require("scripts/globals/magic");
------------------------------------
+require("scripts/globals/msg");
 
 
 -----------------------------------
@@ -53,7 +53,7 @@ function onAdditionalEffect(mob,target,damage)
             mob:addHP(drain);
         end
 
-        return SUBEFFECT_HP_DRAIN, MSGBASIC_ADD_EFFECT_HP_DRAIN, drain;
+        return SUBEFFECT_HP_DRAIN, msgBasic.ADD_EFFECT_HP_DRAIN, drain;
     end
 
 end;
@@ -62,7 +62,14 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
+function onMobDeath(mob, player, isKiller)
+end;
+
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
     UpdateNMSpawnPoint(mob:getID());
     mob:setRespawnTime(math.random(5400,6000));
 end;

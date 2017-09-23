@@ -88,6 +88,8 @@ void CAbilityState::ApplyEnmity()
             mob->m_OwnerID.targid = m_PEntity->targid;
             mob->updatemask |= UPDATE_STATUS;
             mob->PEnmityContainer->UpdateEnmity(m_PEntity, m_PAbility->getCE(), m_PAbility->getVE());
+            if (mob->m_HiPCLvl < m_PEntity->GetMLevel())
+                mob->m_HiPCLvl = m_PEntity->GetMLevel();
         }
     }
     else if (PTarget->allegiance == m_PEntity->allegiance)
@@ -130,22 +132,28 @@ bool CAbilityState::CanUseAbility()
     {
         auto PAbility = GetAbility();
         auto PChar = static_cast<CCharEntity*>(m_PEntity);
-        if (PChar->PRecastContainer->HasRecast(RECAST_ABILITY, PAbility->getRecastId()))
+        if (PChar->PRecastContainer->HasRecast(RECAST_ABILITY, PAbility->getRecastId(), PAbility->getRecastTime()))
         {
             PChar->pushPacket(new CMessageBasicPacket(PChar, PChar, 0, 0, MSGBASIC_WAIT_LONGER));
             return false;
         }
-        if (PChar->StatusEffectContainer->HasStatusEffect(EFFECT_AMNESIA)) {
+        if (PChar->StatusEffectContainer->HasStatusEffect({EFFECT_AMNESIA, EFFECT_IMPAIRMENT}))
+        {
             PChar->pushPacket(new CMessageBasicPacket(PChar, PChar, 0, 0, MSGBASIC_UNABLE_TO_USE_JA2));
             return false;
         }
-        std::unique_ptr<CMessageBasicPacket> errMsg;
+        std::unique_ptr<CBasicPacket> errMsg;
         auto PTarget = GetTarget();
         if (PChar->IsValidTarget(PTarget->targid, PAbility->getValidTarget(), errMsg))
         {
             if (PChar != PTarget && distance(PChar->loc.p, PTarget->loc.p) > PAbility->getRange())
             {
                 PChar->pushPacket(new CMessageBasicPacket(PChar, PTarget, 0, 0, MSGBASIC_TOO_FAR_AWAY));
+                return false;
+            }
+            if (!m_PEntity->PAI->TargetFind->canSee(&PTarget->loc.p))
+            {
+                m_errorMsg = std::make_unique<CMessageBasicPacket>(m_PEntity, PTarget, PAbility->getID(), 0, MSGBASIC_CANNOT_PERFORM_ACTION);
                 return false;
             }
             if (PAbility->getID() >= ABILITY_HEALING_RUBY)

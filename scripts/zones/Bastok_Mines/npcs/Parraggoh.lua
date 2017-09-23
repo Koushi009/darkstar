@@ -5,7 +5,6 @@
 -----------------------------------
 package.loaded["scripts/zones/Bastok_Mines/TextIDs"] = nil;
 -----------------------------------
-
 require("scripts/globals/quests");
 require("scripts/globals/settings");
 require("scripts/globals/keyitems");
@@ -54,8 +53,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID2: %u",csid);
---printf("RESULT2: %u",option);
+    -- printf("CSID2: %u",csid);
+    -- printf("RESULT2: %u",option);
 end;
 
 -----------------------------------
@@ -63,8 +62,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x0007 and option == 0) then
         player:addQuest(BASTOK,BEAUTY_AND_THE_GALKA);
@@ -75,7 +74,7 @@ function onEventFinish(player,csid,option)
             player:completeQuest(BASTOK,BEAUTY_AND_THE_GALKA);
             player:setVar("BeautyAndTheGalkaDenied",0);
             player:delKeyItem(PALBOROUGH_MINES_LOGS);
-            player:addFame(BASTOK,BAS_FAME*75); 
+            player:addFame(BASTOK,75); 
             player:addItem(16465);
             player:messageSpecial(ITEM_OBTAINED,16465);
         else
@@ -84,7 +83,5 @@ function onEventFinish(player,csid,option)
     end
     
 end;
-
-
 
 

@@ -2,9 +2,9 @@
 --  Area: Port San d'Oria
 --   NPC: Ufanne
 --  Type: Standard NPC
--- @zone: 232
---  @pos -15.965 -3 -47.748
--- 
+-- @zone 232
+-- !pos -15.965 -3 -47.748
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Port_San_dOria/TextIDs"] = nil;

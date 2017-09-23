@@ -6,14 +6,14 @@
 --   http://wiki.ffxiclopedia.org/wiki/Grounds_Tome
 --
 -------------------------------------------------
-
+require("scripts/globals/utils")
+require("scripts/globals/common");
+require("scripts/globals/status");
 require("scripts/globals/settings");
 require("scripts/globals/conquest");
 require("scripts/globals/teleports");
-require("scripts/globals/status");
 require("scripts/globals/regimereward");
 require("scripts/globals/regimeinfo");
-require("scripts/globals/common");
 
 -----------------------------------
 -- onEventUpdate params
@@ -56,16 +56,6 @@ GOV_MENU_DRIED_AGARICUS  = 260;
 GOV_MENU_INSTANT_RICE    = 276;
 GOV_MENU_CIPHER_SAKURA   = 292;
 GOV_MENU_CANCEL_REGIME   = 3;
-GOV_MENU_REPEAT_REGIME1  = -2147483630; -- 2147483666;
-GOV_MENU_REPEAT_REGIME2  = -2147483614; -- 2147483682;
-GOV_MENU_REPEAT_REGIME3  = -2147483598; -- 2147483698;
-GOV_MENU_REPEAT_REGIME4  = -2147483582; -- 2147483714;
-GOV_MENU_REPEAT_REGIME5  = -2147483566; -- 2147483730;
-GOV_MENU_REPEAT_REGIME6  = -2147483550; -- 2147483746;
-GOV_MENU_REPEAT_REGIME7  = -2147483534; -- 2147483762;
-GOV_MENU_REPEAT_REGIME8  = -2147483518; -- 2147483778;
-GOV_MENU_REPEAT_REGIME9  = -2147483502; -- 2147483794;
-GOV_MENU_REPEAT_REGIME10 = -2147483486; -- 2147483810;
 
 -----------------------------------
 -- Message IDs
@@ -80,36 +70,36 @@ GOV_MSG_BEGINS_ANEW      = 643;
 
 -- Per zone msg ID of "new training regime registered!"
 -- Change these if text IDs get moved by a client update.
-GOV_MSG_RANGUEMONT_PASS        = 9483;
-GOV_MSG_BOSTAUNIEUX_OUBLIETTE  = 9498;
-GOV_MSG_TORAIMARAI_CANAL       = 9582;
-GOV_MSG_ZERUHN_MINES           = 9456;
-GOV_MSG_KING_RANPERRES_TOMB    = 10300;
-GOV_MSG_DANGRUF_WADI           = 10416;
-GOV_MSG_INNER_HORUTOTO_RUINS   = 9457;
-GOV_MSG_ORDELLES_CAVES         = 10425;
-GOV_MSG_OUTER_HORUTOTO_RUINS   = 10313;
-GOV_MSG_ELDIEME_NECROPOLIS     = 9636;
-GOV_MSG_GUSGEN_MINES           = 10345;
-GOV_MSG_CRAWLERS_NEST          = 9398;
-GOV_MSG_MAZE_OF_SHAKHRAMI      = 10316;
-GOV_MSG_GARLAIGE_CITADEL       = 9569;
-GOV_MSG_FEIYIN                 = 9558;
-GOV_MSG_BOYAHDA_TREE           = 10301;
-GOV_MSG_KORROLOKA_TUNNEL       = 9423;
-GOV_MSG_KUFTAL_TUNNEL          = 10300;
-GOV_MSG_VELUGANNON_PALACE      = 10129;
-GOV_MSG_SHRINE_OF_RUAVITAU     = 10305;
-GOV_MSG_IFRITS_CAULDRON        = 10392;
+GOV_MSG_RANGUEMONT_PASS        = 9515;
+GOV_MSG_BOSTAUNIEUX_OUBLIETTE  = 9529;
+GOV_MSG_TORAIMARAI_CANAL       = 9613;
+GOV_MSG_ZERUHN_MINES           = 9487;
+GOV_MSG_KING_RANPERRES_TOMB    = 10327;
+GOV_MSG_DANGRUF_WADI           = 10447;
+GOV_MSG_INNER_HORUTOTO_RUINS   = 9483;
+GOV_MSG_ORDELLES_CAVES         = 10459;
+GOV_MSG_OUTER_HORUTOTO_RUINS   = 10339;
+GOV_MSG_ELDIEME_NECROPOLIS     = 9670;
+GOV_MSG_GUSGEN_MINES           = 10379;
+GOV_MSG_CRAWLERS_NEST          = 9424;
+GOV_MSG_MAZE_OF_SHAKHRAMI      = 10345;
+GOV_MSG_GARLAIGE_CITADEL       = 9601;
+GOV_MSG_FEIYIN                 = 9589;
+GOV_MSG_BOYAHDA_TREE           = 10332;
+GOV_MSG_KORROLOKA_TUNNEL       = 9454;
+GOV_MSG_KUFTAL_TUNNEL          = 10331;
+GOV_MSG_VELUGANNON_PALACE      = 10155;
+GOV_MSG_SHRINE_OF_RUAVITAU     = 10336;
+GOV_MSG_IFRITS_CAULDRON        = 10418;
 GOV_MSG_GUSTAV_TUNNEL          = 9522;
-GOV_MSG_LABYRINTH_OF_ONZOZO    = 9353;
-GOV_MSG_LOWER_DELKFUTTS_TOWER  = 10673;
-GOV_MSG_MIDDLE_DELKFUTTS_TOWER = 9419;
-GOV_MSG_UPPER_DELKFUTTS_TOWER  = 9425;
-GOV_MSG_TEMPLE_OF_UGGALEPIH    = 10488;
-GOV_MSG_DEN_OF_RANCOR          = 9452;
-GOV_MSG_SEA_SERPENT_GROTTO     = 9647;
-GOV_MSG_QUICKSAND_CAVES        = 10327;
+GOV_MSG_LABYRINTH_OF_ONZOZO    = 9384;
+GOV_MSG_LOWER_DELKFUTTS_TOWER  = 10704;
+GOV_MSG_MIDDLE_DELKFUTTS_TOWER = 9450;
+GOV_MSG_UPPER_DELKFUTTS_TOWER  = 9456;
+GOV_MSG_TEMPLE_OF_UGGALEPIH    = 10519;
+GOV_MSG_DEN_OF_RANCOR          = 9483;
+GOV_MSG_SEA_SERPENT_GROTTO     = 9678;
+GOV_MSG_QUICKSAND_CAVES        = 10358;
 
 -----------------------------------
 -- Event IDs
@@ -151,12 +141,14 @@ GOV_EVENT_QUICKSAND_CAVES        = 15;
 ----------------------------------
 
 function startGov(eventid,player)
-    if (GROUNDS_TOMES == 1) then
-       local hasRegime = player:getVar("fov_regimeid");
-       local tabs = player:getCurrency("valor_point");
-       player:startEvent(eventid,0,0,0,0,0,0,tabs,hasRegime);
-	end;
-end
+    if (ENABLE_GROUNDS_TOMES == 1) then
+        local hasRegime = player:getVar("fov_regimeid");
+        local tabs = player:getCurrency("valor_point");
+        player:startEvent(eventid,0,0,0,0,0,0,tabs,hasRegime);
+    else
+        player:PrintToPlayer("Disabled.");
+    end
+end;
 
 ----------------------------------
 -- GoV onEventUpdate
@@ -241,6 +233,14 @@ function finishGov(player,csid,option,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,msg_offset)
     local tabs = player:getCurrency("valor_point");
     local HAS_FOOD = player:hasStatusEffect(EFFECT_FOOD);
     local HAS_SUPPORT_FOOD = player:hasStatusEffect(EFFECT_FIELD_SUPPORT_FOOD);
+    local fov_repeat = bit.band(option, 0x80000000);
+
+    if (fov_repeat ~= 0) then
+        fov_repeat = 1;
+    end
+
+    option = bit.band(option, 0x7FFFFFFF);
+
 -- ================= FIELD SUPPORT ============================================
     if (option == GOV_MENU_REPATRIATION) then -- Send to home nation
         if (tabs >= 50) then
@@ -403,46 +403,37 @@ function finishGov(player,csid,option,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,msg_offset)
         player:setVar("fov_numkilled3",0);
         player:setVar("fov_numkilled4",0);
         player:showText(player,msg_cancel);
+
     elseif (option == GOV_MENU_PAGE_1) then -- Page 1
-        writeRegime(player,r1,msg_accept,msg_jobs,0);
+        writeRegime(player,r1,msg_accept,msg_jobs, fov_repeat);
+
     elseif (option == GOV_MENU_PAGE_2) then -- Page 2
-        writeRegime(player,r2,msg_accept,msg_jobs,0);
+        writeRegime(player,r2,msg_accept,msg_jobs, fov_repeat);
+
     elseif (option == GOV_MENU_PAGE_3) then -- Page 3
-        writeRegime(player,r3,msg_accept,msg_jobs,0);
+        writeRegime(player,r3,msg_accept,msg_jobs, fov_repeat);
+
     elseif (option == GOV_MENU_PAGE_4) then -- Page 4
-        writeRegime(player,r4,msg_accept,msg_jobs,0);
+        writeRegime(player,r4,msg_accept,msg_jobs, fov_repeat);
+
     elseif (option == GOV_MENU_PAGE_5) then -- Page 5
-        writeRegime(player,r5,msg_accept,msg_jobs,1);
+        writeRegime(player,r5,msg_accept,msg_jobs, fov_repeat);
+
     elseif (option == GOV_MENU_PAGE_6) then -- Page 6
-        writeRegime(player,r6,msg_accept,msg_jobs,0);
+        writeRegime(player,r6,msg_accept,msg_jobs, fov_repeat);
+
     elseif (option == GOV_MENU_PAGE_7) then -- Page 7
-        writeRegime(player,r7,msg_accept,msg_jobs,0);
+        writeRegime(player,r7,msg_accept,msg_jobs, fov_repeat);
+
     elseif (option == GOV_MENU_PAGE_8) then -- Page 8
-        writeRegime(player,r8,msg_accept,msg_jobs,0);
+        writeRegime(player,r8,msg_accept,msg_jobs, fov_repeat);
+
     elseif (option == GOV_MENU_PAGE_9) then -- Page 9
-        writeRegime(player,r9,msg_accept,msg_jobs,0);
+        writeRegime(player,r9,msg_accept,msg_jobs, fov_repeat);
+
     elseif (option == GOV_MENU_PAGE_10) then -- Page 10
-        writeRegime(player,r10,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME1) then -- Page 1 Repeat
-        writeRegime(player,r1,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME2) then -- Page 2 Repeat
-        writeRegime(player,r2,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME3) then -- Page 3 Repeat
-        writeRegime(player,r3,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME4) then -- Page 4 Repeat
-        writeRegime(player,r4,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME5) then -- Page 5 Repeat
-        writeRegime(player,r5,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME6) then -- Page 6 Repeat
-        writeRegime(player,r6,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME7) then -- Page 7 Repeat
-        writeRegime(player,r7,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME8) then -- Page 8 Repeat
-        writeRegime(player,r8,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME9) then -- Page 9 Repeat
-        writeRegime(player,r9,msg_accept,msg_jobs,1);
-    elseif (option == GOV_MENU_REPEAT_REGIME10) then -- Page 10 Repeat
-        writeRegime(player,r10,msg_accept,msg_jobs,1);
+        writeRegime(player,r10,msg_accept,msg_jobs, fov_repeat);
+
     else
         -- print("opt is "..option);
     end
@@ -475,15 +466,13 @@ end
 
 function checkGoVregime(player,mob,rid,index)
     -- Dead people get no points
-    if (player:getHP() == 0) then
+    if (player == nil or player:getHP() == 0) then
         return;
     end
 
     if (player:getVar("fov_regimeid") == rid) then -- Player is doing this regime
-        -- Need to add difference because a lvl1 can XP with a level 75 at Ro'Maeve
-        local difference = math.abs(mob:getMainLvl() - player:getMainLvl());
 
-        if ((mob:getBaseExp() > 0 or LOW_LEVEL_REGIME == 1) and difference <= 15 and (player:checkDistance(mob) < 100 or player:checkFovDistancePenalty() == 0)) then
+        if (player:checkValorCredit(mob) == true or LOW_LEVEL_REGIME == 1) then
             -- Get the number of mobs needed/killed
             local needed = player:getVar("fov_numneeded"..index);
             local killed = player:getVar("fov_numkilled"..index);
@@ -504,6 +493,15 @@ function checkGoVregime(player,mob,rid,index)
                         -- Complete regime
                         player:messageBasic(GOV_MSG_COMPLETED_REGIME);
                         local reward = getGoVregimeReward(rid);
+
+                        -- adjust reward down if regime is higher than mob level cap
+                        -- example: if you have mobs capped at level 80, and the regime is level 100, you will only get 80% of the reward
+                        if NORMAL_MOB_MAX_LEVEL_RANGE_MAX > 0 and fov_info[6] > NORMAL_MOB_MAX_LEVEL_RANGE_MAX then
+                            local avgCapLevel = (NORMAL_MOB_MAX_LEVEL_RANGE_MIN + NORMAL_MOB_MAX_LEVEL_RANGE_MAX)/2;
+                            local avgMobLevel = (fov_info[5] + fov_info[6])/2;
+                            reward = math.floor(reward * avgCapLevel/avgMobLevel);
+                        end
+
                         local RewardCAP = reward * 2;
                         local GoV_clears = 0;
                         local tabs = (math.floor(reward/10)*TABS_RATE);
@@ -530,7 +528,7 @@ function checkGoVregime(player,mob,rid,index)
                                     power = 22;
                                 end
                             else
-                                power = 4 + player:getStatusEffect(RandomProwess):getPower(); 
+                                power = 4 + player:getStatusEffect(RandomProwess):getPower();
                                 if (power > 44) then
                                     power = 44;
                                 end
@@ -568,6 +566,10 @@ function checkGoVregime(player,mob,rid,index)
 
                         -- Award gil and tabs once per day.
                         if (player:getVar("fov_LastReward") < VanadielEpoch) then
+                            local CAP = 50000; -- Retail caps it at 50k
+                            if (tabs + player:getCurrency("valor_point") > CAP) then
+                                tabs = utils.clamp(CAP - player:getCurrency("valor_point"),0,CAP);
+                            end
                             player:messageBasic(GOV_MSG_GET_GIL,reward);
                             player:addGil(reward);
                             player:addCurrency("valor_point", tabs);
@@ -580,7 +582,7 @@ function checkGoVregime(player,mob,rid,index)
                         -- Give player the candy and inform which Prowess they got.
                         player:addExp(reward);
                         player:messageBasic(ProwessMessage);
-                        
+
                         -- Debugging crap.
                         -- player:PrintToPlayer( string.format( "ProwessID: '%u' ", RandomProwess ) );
                         -- player:PrintToPlayer( string.format( "reward: '%u' ", reward ) );
@@ -592,7 +594,7 @@ function checkGoVregime(player,mob,rid,index)
                                 player:setVar("fov_numkilled"..i, 0);
                             end
                         end
-                        
+
                         if (player:getVar("fov_repeat") ~= 1) then
                             player:setVar("fov_regimeid",0);
                             player:setVar("fov_numneeded1",0);

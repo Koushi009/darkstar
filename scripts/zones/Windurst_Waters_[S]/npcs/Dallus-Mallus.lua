@@ -2,9 +2,9 @@
 --  Area: Windurst Waters (S)
 --   NPC: Dallus-Mallus
 --  Type: Campaign Intel Advisor
--- @zone: 94
---  @pos -13.666 -2 26.180
--- 
+-- @zone 94
+-- !pos -13.666 -2 26.180
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters_[S]/TextIDs"] = nil;

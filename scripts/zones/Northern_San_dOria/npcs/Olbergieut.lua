@@ -1,15 +1,14 @@
 -----------------------------------
 -- Area: Northern San d'Oria
---  NPC: Olbergieut 
+--  NPC: Olbergieut
 -- Type: Quest NPC
 -- @zone 231
---  @pos 91 0 121
+-- !pos 91 0 121
 --
 -- Starts and Finishes Quest: Gates of Paradise
 -----------------------------------
 package.loaded["scripts/zones/Northern_San_dOria/TextIDs"] = nil;
 -----------------------------------
-
 require("scripts/globals/settings");
 require("scripts/globals/titles");
 require("scripts/globals/keyitems");
@@ -39,16 +38,16 @@ function onTrigger(player,npc)
     else
         player:startEvent(0x0264);
     end;
-    
-end; 
+
+end;
 
 -----------------------------------
 -- onEventUpdate
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -56,10 +55,10 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
-    if (csid == 0x026b and option == 0) then 
+    if (csid == 0x026b and option == 0) then
         player:addQuest(SANDORIA, GATES_TO_PARADISE);
         player:addKeyItem(SCRIPTURE_OF_WIND);
         player:messageSpecial(KEYITEM_OBTAINED, SCRIPTURE_OF_WIND);
@@ -68,12 +67,12 @@ function onEventFinish(player,csid,option)
             player:messageSpecial(ITEM_CANNOT_BE_OBTAINED, 13584);
         else
             player:completeQuest(SANDORIA,GATES_TO_PARADISE);
-            player:addFame(SANDORIA,SAN_FAME*30);
+            player:addFame(SANDORIA,30);
             player:addTitle(THE_PIOUS_ONE);
             player:delKeyItem(SCRIPTURE_OF_WATER);
             player:addItem(13584,1);
             player:messageSpecial(ITEM_OBTAINED,13584);
         end;
     end;
-    
+
 end;

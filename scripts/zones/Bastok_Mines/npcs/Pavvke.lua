@@ -5,7 +5,6 @@
 -----------------------------------
 package.loaded["scripts/zones/Bastok_Mines/TextIDs"] = nil;
 -----------------------------------
-
 require("scripts/globals/quests");
 require("scripts/globals/settings");
 require("scripts/zones/Bastok_Mines/TextIDs");
@@ -53,8 +52,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID2: %u",csid);
---printf("RESULT2: %u",option);
+    -- printf("CSID2: %u",csid);
+    -- printf("RESULT2: %u",option);
 end;
 
 -----------------------------------
@@ -62,24 +61,22 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
     
     if (csid == 0x005a) then
         player:addQuest(BASTOK,FALLEN_COMRADES);
     elseif (csid == 0x005b) then
         player:completeQuest(BASTOK,FALLEN_COMRADES);
-        player:addFame(BASTOK,BAS_FAME*120);
+        player:addFame(BASTOK,120);
         player:addGil(GIL_RATE*550);
         player:messageSpecial(GIL_OBTAINED,GIL_RATE*550);
     elseif (csid == 0x005c) then
-        player:addFame(BASTOK,BAS_FAME*8);
+        player:addFame(BASTOK,8);
         player:addGil(GIL_RATE*550);
         player:messageSpecial(GIL_OBTAINED,GIL_RATE*550);
     end
         
 end;
-
-
 
 

@@ -2,11 +2,12 @@
 -- Area: Chateau d'Oraguille
 -- NPC:  Rahal
 -- Involved in Quests: The Holy Crest, Lure of the Wildcat (San d'Oria)
--- @pos -28 0.1 -6 233
+-- !pos -28 0.1 -6 233
 -----------------------------------
 package.loaded["scripts/zones/Chateau_dOraguille/TextIDs"] = nil;
 -----------------------------------
 
+require("scripts/globals/status");
 require("scripts/globals/keyitems");
 require("scripts/globals/quests");
 require("scripts/zones/Chateau_dOraguille/TextIDs");
@@ -16,13 +17,13 @@ require("scripts/zones/Chateau_dOraguille/TextIDs");
 -----------------------------------
 
 function onTrade(player,npc,trade)
-    
+
     if (player:getQuestStatus(SANDORIA,FLYERS_FOR_REGINE) == QUEST_ACCEPTED) then
         if (trade:hasItemQty(532,1) and trade:getItemCount() == 1) then -- Trade Magicmart_flyer
             player:messageSpecial(FLYER_REFUSED);
         end
     end
-    
+
 end;
 
 -----------------------------------
@@ -36,7 +37,7 @@ function onTrigger(player,npc)
     local Stalker_Quest = player:getQuestStatus(SANDORIA,KNIGHT_STALKER);
     local StalkerProgress = player:getVar("KnightStalker_Progress");
     local WildcatSandy = player:getVar("WildcatSandy");
-    
+
     if (player:getQuestStatus(SANDORIA,LURE_OF_THE_WILDCAT_SAN_D_ORIA) == QUEST_ACCEPTED and player:getMaskBit(WildcatSandy,17) == false) then
         player:startEvent(0x022f);
     -- Need to speak with Rahal to get Dragon Curse Remedy
@@ -45,7 +46,7 @@ function onTrigger(player,npc)
     elseif (CrestProgress == 5 and RemedyKI == true) then
         player:startEvent(122); -- Reminder to go to Gelsba
      -- Completed AF2, AF3 available, and currently on DRG.  No level check, since they cleared AF2.
-    elseif (player:getQuestStatus(SANDORIA,CHASING_QUOTAS) == QUEST_COMPLETED and Stalker_Quest == QUEST_AVAILABLE and player:getMainJob() == 14) then
+    elseif (player:getQuestStatus(SANDORIA,CHASING_QUOTAS) == QUEST_COMPLETED and Stalker_Quest == QUEST_AVAILABLE and player:getMainJob() == JOBS.DRG) then
         if (player:getVar("KnightStalker_Declined") == 0) then
             player:startEvent(121); -- Start AF3
         else
@@ -73,7 +74,7 @@ function onTrigger(player,npc)
     else
         player:startEvent(0x0211); -- standard dialogue
     end
-    
+
 end;
 
 -----------------------------------
@@ -81,8 +82,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -90,8 +91,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x003c) then
         player:addKeyItem(DRAGON_CURSE_REMEDY);

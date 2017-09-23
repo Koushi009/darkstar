@@ -3,9 +3,8 @@
 -- NPC:  Zona Shodhun
 -- Starts and Finishes Quest: Pretty Little Things
 -- @zone 246
--- @pos -175 -5 -4
+-- !pos -175 -5 -4
 -----------------------------------
-package.loaded["scripts/globals/settings"] = nil;
 -----------------------------------
 
 require("scripts/globals/settings");
@@ -63,7 +62,7 @@ itemQuality = 0;
     if (itemQuality == 2) then
         if (PrettyLittleThings == QUEST_COMPLETED) then
             player:startEvent(0x2727, 0, 246, 4);
-        else 
+        else
             player:startEvent(0x2727, 0, 246, 2);
         end
     elseif (itemQuality == 1) then
@@ -71,14 +70,14 @@ itemQuality = 0;
             player:startEvent(0x2727, 0, 246, 5);
         elseif (PrettyLittleThings == QUEST_ACCEPTED) then
             player:startEvent(0x2727, 0, 246, 3);
-        else 
+        else
             player:startEvent(0x2727, 0, 246, 1);
         end
-    else 
+    else
         player:startEvent(0x2727, 0, 246, 0);
     end
 
-end; 
+end;
 
 
 -----------------------------------
@@ -87,7 +86,7 @@ end;
 
 function onTrigger(player,npc)
     player:startEvent(0x2727, 0, 246, 10);
-end; 
+end;
 
 
 -----------------------------------
@@ -95,8 +94,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 
@@ -105,13 +104,13 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x2727 and option == 4002) then
         player:moghouseFlag(8);
         player:messageSpecial(MOGHOUSE_EXIT);
-        player:addFame(JEUNO, JEUNO_FAME*30);
+        player:addFame(JEUNO, 30);
         player:tradeComplete();
         player:completeQuest(JEUNO,PRETTY_LITTLE_THINGS);
     elseif (csid == 0x2727 and option == 1) then

@@ -2,9 +2,9 @@
 --  Area: Windurst Waters (S)
 --   NPC: Ragyaya
 --  Type: Standard NPC
--- @zone: 94
---  @pos -95.376 -3 60.795
--- 
+-- @zone 94
+-- !pos -95.376 -3 60.795
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters_[S]/TextIDs"] = nil;

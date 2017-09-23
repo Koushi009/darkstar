@@ -3,7 +3,7 @@
 -- NPC:  Melek
 -- Involved in Mission 2-3
 -- @zone 240
--- @pos -80 -5 158
+-- !pos -80 -5 158
 -----------------------------------
 package.loaded["scripts/zones/Port_Windurst/TextIDs"] = nil;
 -----------------------------------
@@ -24,13 +24,13 @@ end;
 -----------------------------------
 
 function onTrigger(player,npc)
-    
+
     pNation = player:getNation();
-    
+
     if (player:getCurrentMission(BASTOK) ~= 255) then
         currentMission = player:getCurrentMission(pNation);
 
-        if (pNation == BASTOK) then
+        if (pNation == NATION_BASTOK) then
             missionStatus = player:getVar("MissionStatus");
             if (currentMission == THE_EMISSARY) then
                 -- Bastok Mission 2-3 Part I - Windurst > San d'Oria
@@ -71,7 +71,7 @@ function onTrigger(player,npc)
     else
         player:startEvent(0x002a);
     end
-    
+
 end;
 
 -----------------------------------
@@ -79,8 +79,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -88,9 +88,9 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
-    
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
+
     if (csid == 0x0030) then
         player:addMission(BASTOK,THE_EMISSARY_WINDURST);
         player:setVar("MissionStatus",2);
@@ -113,5 +113,5 @@ function onEventFinish(player,csid,option)
         player:setVar("MissionStatus",10);  -- return to Bastok
         player:delKeyItem(KINDRED_CREST)
     end
-    
+
 end;

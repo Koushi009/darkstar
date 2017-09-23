@@ -3,6 +3,8 @@
 --  MOB: Defender
 -----------------------------------
 
+require("scripts/globals/groundsofvalor");
+
 -----------------------------------
 -- onMobInitialize Action
 -----------------------------------
@@ -73,19 +75,8 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
-
-    checkGoVregime(ally,mob,749,1);
-
-    local Defender = mob:getID();
-    local AuraGear = mob:getID() + 1;
-
-    GetMobByID(Defender):resetLocalVars();
-
-    if (GetMobAction(AuraGear) ~= 0) then
-        DespawnMob(AuraGear);
-    end
-
+function onMobDeath(mob, player, isKiller)
+    checkGoVregime(player,mob,749,1);
 end;
 
 -----------------------------------

@@ -22,7 +22,6 @@
 */
 
 #include "../common/kernel.h"
-#include "../common/malloc.h"
 #include "../common/showmsg.h"
 #include "../common/socket.h"
 #include "../common/taskmgr.h"
@@ -33,11 +32,20 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <cstring>
+#include "fmt/printf.h"
 
 #ifndef _WIN32
 	#include <unistd.h>
 #endif
 
+#ifdef __linux__
+	#include <linux/version.h>
+	#include <sys/wait.h>
+	#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+		#include <sys/prctl.h>
+		#define HAS_YAMA_PRCTL
+	#endif
+#endif
 
 int runflag = 1;
 int arg_c = 0;
@@ -83,6 +91,48 @@ sigfunc *compat_signal(int signo, sigfunc *func)
 #endif
 
 /************************************************************************
+*                                                                       *
+*  CORE : Magical backtrace dump procedure                              *
+*                                                                       *
+************************************************************************/
+
+static void dump_backtrace(void)
+{
+	// gdb
+#if defined(__linux__)
+	int fd[2];
+	pipe(fd);
+	pid_t child_pid = fork();
+
+#ifdef HAS_YAMA_PRCTL
+	// Tell yama that we allow our child_pid to trace our process
+	if (child_pid > 0) {
+		prctl(PR_SET_DUMPABLE, 1);
+		prctl(PR_SET_PTRACER, child_pid);
+	}
+#endif
+
+	if (child_pid < 0) {
+		ShowError ("Fork failed for gdb backtrace");
+	} else if (child_pid == 0) {
+		// NOTE: gdb-7.8 has regression, either update or downgrade.
+		close(fd[0]);
+		char buf[255];
+		snprintf(buf, sizeof(buf), "gdb -p %d -n -batch -ex bt 2>/dev/null | sed -n '/<signal handler/{n;x;b};H;${x;p}' 1>&%d", getppid(), fd[1]);
+		execl("/bin/sh", "/bin/sh", "-c", buf, NULL);
+		ShowError ("Failed to launch gdb for backtrace");
+		_exit(EXIT_FAILURE);
+	} else {
+		close(fd[1]);
+		waitpid(child_pid, NULL, 0);
+		char buf[4096] = {0};
+		read(fd[0], buf, sizeof(buf) - 1);
+		ShowFatalError ("--- gdb backtrace ---\n%s", buf);
+	}
+#endif
+}
+
+/************************************************************************
 *																		*
 *  CORE : Signal Sub Function											*
 *																		*
@@ -102,6 +152,7 @@ static void sig_proc(int sn)
 			break;
 		case SIGSEGV:
 		case SIGFPE:
+			dump_backtrace();
 			do_abort();
 			// Pass the signal to the system's default handler
 			compat_signal(sn, SIG_DFL);
@@ -162,8 +213,8 @@ const char* get_git_revision(void)
 {
     FILE *fp = NULL;
 
-    // Pull lastest fetch version from FETCH_HEAD..
-    if ((fp = fopen(".git/FETCH_HEAD", "r")) != NULL)
+    // GIT_VER was copied in to working dir post-build
+    if ((fp = fopen("GIT_VER", "r")) != NULL)
     {
         int8 line[1024], w1[1024], w2[1024];
 
@@ -233,7 +284,6 @@ int main (int argc, char **argv)
 	}
 
     log_init(argc, argv);
-	malloc_init();
 	set_server_type();
 	display_title();
 	usercheck();

@@ -3,7 +3,7 @@
 --  MOB: Dark Spark
 -- Involved in Quests: Borghertz's Hands (AF Hands, Many job)
 -- @zone 161
--- @pos 63 -24 21
+-- !pos 63 -24 21
 -----------------------------------
 package.loaded["scripts/zones/Castle_Zvahl_Baileys/TextIDs"] = nil;
 -----------------------------------
@@ -20,6 +20,6 @@ end;
 -----------------------------------
 -- OnMobDeath Action
 -----------------------------------
-function onMobDeath(mob, killer, ally)
-    ally:setVar("BorghertzSparkKilled",1);
+function onMobDeath(mob, player, isKiller)
+    player:setVar("BorghertzSparkKilled",1);
 end;

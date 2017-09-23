@@ -1,15 +1,15 @@
 -----------------------------------
 -- Area: Fei'Yin
 -- NPC: Seed Afterglow
--- @pos -94.342 -15.656 -85.889 204     Red
--- @pos -52.019 -16.525 38.848 204      Orange
--- @pos 36.000 -15.000 -35.000 204      Green
--- @pos 74.611 -16.123 134.570 204      Yellow
--- @pos -6.710  0.462 210.245 204       Cerulean
--- @pos -200.000 -15.425 120.000 204    Blue
--- @pos -168.000 0.114 130.000 204      Golden
--- @pos -130.000 0.113 8.000 204        Silver
--- @pos -50.000 0.114 32.000 204        White
+-- !pos -94.342 -15.656 -85.889 204     Red
+-- !pos -52.019 -16.525 38.848 204      Orange
+-- !pos 36.000 -15.000 -35.000 204      Green
+-- !pos 74.611 -16.123 134.570 204      Yellow
+-- !pos -6.710  0.462 210.245 204       Cerulean
+-- !pos -200.000 -15.425 120.000 204    Blue
+-- !pos -168.000 0.114 130.000 204      Golden
+-- !pos -130.000 0.113 8.000 204        Silver
+-- !pos -50.000 0.114 32.000 204        White
 -- Todo: NPC moving. In retail these move around with 3-5+ pos EACH
 -----------------------------------
 package.loaded["scripts/zones/FeiYin/TextIDs"] = nil;
@@ -40,7 +40,7 @@ function onTrigger(player,npc)
     local Mission = player:getCurrentMission(ACP);
     local NeedToZone = player:needToZone();
     local Afterglow = npc:getID();
-    local First = 17613145;
+    local First = 17613148;
     local MARK_EFFECT = player:hasStatusEffect(EFFECT_MARK_OF_SEED);
     local PROGRESS = player:getVar("SEED_AFTERGLOW_MASK");
     local INTENSITY = player:getVar("SEED_AFTERGLOW_INTENSITY");

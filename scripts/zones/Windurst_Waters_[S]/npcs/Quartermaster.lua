@@ -2,9 +2,9 @@
 --  Area: Windurst Waters (S)
 --   NPC: Quartermaster
 --  Type: Standard NPC
--- @zone: 94
---  @pos -60.200 -4.7 32.500
--- 
+-- @zone 94
+-- !pos -60.200 -4.7 32.500
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters_[S]/TextIDs"] = nil;

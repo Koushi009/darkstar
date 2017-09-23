@@ -1,8 +1,8 @@
 -----------------------------------
 -- Area: Temple of Uggalepih (159)
--- NPC:  qm8 (???) 
+-- NPC:  qm8 (???)
 -- Notes: Used to spawn Habetrot
--- @pos -57.434 -8.484 55.317 0
+-- !pos -57.434 -8.484 55.317 0
 -----------------------------------
 package.loaded["scripts/zones/Temple_of_Uggalepih/TextIDs"] = nil;
 -----------------------------------
@@ -21,13 +21,13 @@ function onTrade(player,npc,trade)
         -- 20% Chance to spawn Habetrot, else it's a Rumble Crawler
         local roll = math.random(1,5);
         if (roll < 2) then
-            SpawnMob(17428811,900):updateClaim(player); -- Spawn Habetrot
+            SpawnMob(17428811):updateClaim(player); -- Spawn Habetrot
         else
-            SpawnMob(17428812,900):updateClaim(player); -- Spawn Rumble Crawler
+            SpawnMob(17428812):updateClaim(player); -- Spawn Rumble Crawler
         end
         npc:setStatus(STATUS_DISAPPEAR);
     end
-end; 
+end;
 
 -----------------------------------
 -- onTrigger Action
@@ -42,8 +42,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -51,6 +51,6 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;

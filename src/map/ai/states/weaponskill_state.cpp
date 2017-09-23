@@ -46,6 +46,10 @@ CWeaponSkillState::CWeaponSkillState(CBattleEntity* PEntity, uint16 targid, uint
     {
         throw CStateInitException(std::move(m_errorMsg));
     }
+    if (!m_PEntity->PAI->TargetFind->canSee(&PTarget->loc.p))
+    {
+        throw CStateInitException(std::make_unique<CMessageBasicPacket>(m_PEntity, PTarget, 0, 0, MSGBASIC_CANNOT_PERFORM_ACTION));
+    }
     m_PSkill = std::make_unique<CWeaponSkill>(*skill);
 
     //m_castTime = std::chrono::milliseconds(m_PSkill->getActivationTime());
@@ -100,6 +104,9 @@ bool CWeaponSkillState::Update(time_point tick)
         action_t action;
         m_PEntity->OnWeaponSkillFinished(*this, action);
         m_PEntity->loc.zone->PushPacket(m_PEntity, CHAR_INRANGE_SELF, new CActionPacket(action));
+        auto PTarget {GetTarget()};
+        m_PEntity->PAI->EventHandler.triggerListener("WEAPONSKILL_USE", m_PEntity, PTarget, m_PSkill->getID());
+        PTarget->PAI->EventHandler.triggerListener("WEAPONSKILL_TAKE", PTarget, m_PEntity, m_PSkill->getID());
         auto delay = m_PSkill->getAnimationTime();
         m_finishTime = tick + delay;
         Complete();

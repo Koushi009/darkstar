@@ -57,9 +57,7 @@ end;
 -----------------------------------
 
 function onInitialize(zone)
-    local manuals = {17253061,17253062,17253063};
-
-    SetFieldManual(manuals);
+    SetRespawnTime(17252725, 3600, 4200);
 end;
 
 -----------------------------------
@@ -74,14 +72,14 @@ function onZoneIn( player, prevZone)
     end
 
     -- Check if we are on Windurst Mission 1-2
-    if (player:getCurrentMission( WINDURST) == THE_HEART_OF_THE_MATTER and player:getVar( "MissionStatus") == 5 and prevZone == 194) then
+    if (player:getCurrentMission(WINDURST) == THE_HEART_OF_THE_MATTER and player:getVar( "MissionStatus") == 5 and prevZone == 194) then
         cs = 0x0030;
     elseif (triggerLightCutscene(player)) then -- Quest: I Can Hear A Rainbow
         cs = 0x0032;
     elseif (player:getCurrentMission(WINDURST) == VAIN and player:getVar("MissionStatus") ==1) then
         cs = 0x0034; -- go north no parameters (0 = north NE 1 E 2 SE 3 S 4 SW 5 W6 NW 7 @ as the 6th parameter)
     elseif (player:getCurrentMission(ASA) == BURGEONING_DREAD and prevZone == 241 and
-        player:hasStatusEffect(EFFECT_CHOCOBO) == false ) then
+        player:hasStatusEffect(EFFECT_MOUNTED) == false ) then
         cs = 0x0047;
     end
 

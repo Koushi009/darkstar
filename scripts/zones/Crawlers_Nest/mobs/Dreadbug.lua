@@ -2,7 +2,7 @@
 -- Area: Crawlers Nest
 --  NM:  Dreadbug
 -- Used in Quests: A Boy's Dream
--- @pos -18 -8 124 197
+-- !pos -18 -8 124 197
 -----------------------------------
 
 -----------------------------------
@@ -16,5 +16,5 @@ end;
 -- OnMobDeath Action
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
 end;

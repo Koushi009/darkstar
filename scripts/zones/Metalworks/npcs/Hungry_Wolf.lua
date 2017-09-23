@@ -1,8 +1,8 @@
 -----------------------------------
---  Area: Metalworks
+-- Area: Metalworks
 --   NPC: Hungry Wolf
 --  Type: Quest Giver
---  @pos -25.861 -11 -30.172 237
+-- !pos -25.861 -11 -30.172 237
 --
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -- Updated for "Smoke on the Mountain" by EccentricAnata 03.22.13
@@ -20,7 +20,7 @@ require("scripts/globals/titles");
 
 function onTrade(player,npc,trade)
     if (player:getQuestStatus(BASTOK,SMOKE_ON_THE_MOUNTAIN) ~= QUEST_AVAILABLE and
-      trade:hasItemQty(4395,1) and trade:getItemCount() == 1) then 
+      trade:hasItemQty(4395,1) and trade:getItemCount() == 1) then
             player:startEvent(0x01ad);
     end
 --]]
@@ -35,9 +35,9 @@ function onTrigger(player,npc)
  local SmokeOnTheMountain = player:getQuestStatus(BASTOK,SMOKE_ON_THE_MOUNTAIN);
 
     if (SmokeOnTheMountain == QUEST_AVAILABLE) then
-        player:startEvent(0x01ac); 
-    else 
-        player:startEvent(0x01a5); 
+        player:startEvent(0x01ac);
+    else
+        player:startEvent(0x01a5);
     end
 end;
 
@@ -65,10 +65,10 @@ function onEventFinish(player,csid,option)
         player:messageSpecial(GIL_OBTAINED,GIL_RATE*300);
       player:addTitle(HOT_DOG);
         if (player:getQuestStatus(BASTOK,SMOKE_ON_THE_MOUNTAIN) == QUEST_ACCEPTED) then
-            player:addFame(BASTOK,BAS_FAME*30);
+            player:addFame(BASTOK,30);
             player:completeQuest(BASTOK,SMOKE_ON_THE_MOUNTAIN);
         else
-            player:addFame(BASTOK,BAS_FAME*5);
+            player:addFame(BASTOK,5);
         end
     end
 end;

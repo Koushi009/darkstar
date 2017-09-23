@@ -2,9 +2,9 @@
 --  Area: Windurst Waters (S)
 --   NPC: Tahl Mhioguch
 --  Type: Standard NPC
--- @zone: 94
---  @pos -64.907 -5.947 81.391
--- 
+-- @zone 94
+-- !pos -64.907 -5.947 81.391
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters_[S]/TextIDs"] = nil;

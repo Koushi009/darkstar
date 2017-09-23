@@ -49,6 +49,7 @@ public:
 
     void			DecreaseZoneCounter(CCharEntity* PChar);						// добавляем персонажа в зону
 
+    void			InsertAlly(CBaseEntity* PMob);
     void			InsertPC(CCharEntity* PChar);
     void			InsertNPC(CBaseEntity* PNpc);									// добавляем в зону npc
     void			InsertMOB(CBaseEntity* PMob);									// добавляем в зону mob
@@ -65,10 +66,13 @@ public:
     void			ZoneServer(time_point tick);
     void			ZoneServerRegion(time_point tick);
 
+    CZone*          GetZone();
+
     EntityList_t	GetCharList();
     bool			CharListEmpty();
     uint16			GetNewTargID();
 
+    EntityList_t	m_allyList;
     EntityList_t	m_mobList;				// список всех MOBs в зоне
     EntityList_t	m_petList;				// список всех PETs в зоне
     EntityList_t	m_npcList;				// список всех NPCs в зоне

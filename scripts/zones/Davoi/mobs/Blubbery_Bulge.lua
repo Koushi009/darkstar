@@ -11,11 +11,18 @@ require("scripts/globals/quests");
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
+end;
+
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
     -- Set PH back to normal
     local PH = GetServerVariable("[PH]Blubbery_Bulge");
     SetServerVariable("[PH]Blubbery_Bulge", 0);
-    DeterMob(PH, false);
+    DisallowRespawn(PH, false);
     GetMobByID(PH):setRespawnTime(GetMobRespawnTime(PH));
-    DeterMob(mob:getID(), true);
+    DisallowRespawn(mob:getID(), true);
 end;

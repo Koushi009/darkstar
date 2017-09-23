@@ -8,6 +8,25 @@ require("scripts/globals/titles");
 require("scripts/globals/status");
 
 -----------------------------------
+-- onMobSpawn Action
+-----------------------------------
+
+function onMobSpawn(mob)
+    -- Todo: move this to SQL after drop slots are a thing
+    if (math.random(1,100) <= 5) then -- Hardcoded "this or this item" drop rate until implemented.
+        SetDropRate(1936,13566,1000); -- Defending Ring
+        SetDropRate(1936,13415,0);
+    else
+        SetDropRate(1936,13566,0);
+        SetDropRate(1936,13415,1000); -- Pixie Earring
+    end
+
+    if (LandKingSystem_NQ > 0 or LandKingSystem_HQ > 0) then
+        GetNPCByID(17297459):setStatus(STATUS_DISAPPEAR);
+    end
+end;
+
+-----------------------------------
 -- onMobInitialize Action
 -----------------------------------
 
@@ -33,25 +52,21 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
+    player:addTitle(BEHEMOTH_DETHRONER);
+end;
 
-    ally:addTitle(BEHEMOTH_DETHRONER);
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
 
-    -- Todo: move this to SQL after drop slots are a thing
-    if (math.random(1,100) <= 5) then -- Hardcoded "this or this item" drop rate until implemented.
-        SetDropRate(1936,13566,1000); -- Defending Ring
-        SetDropRate(1936,13415,0);
-    else
-        SetDropRate(1936,13566,0);
-        SetDropRate(1936,13415,1000); -- Pixie Earring
-    end
-
+function onMobDespawn(mob)
     -- Set King_Behemoth's Window Open Time
     if (LandKingSystem_HQ ~= 1) then
         local wait = 72 * 3600;
-        SetServerVariable("[POP]King_Behemoth", os.time(t) + wait); -- 3 days
+        SetServerVariable("[POP]King_Behemoth", os.time() + wait); -- 3 days
         if (LandKingSystem_HQ == 0) then -- Is time spawn only
-            DeterMob(mob:getID(), true);
+            DisallowRespawn(mob:getID(), true);
         end
     end
 
@@ -59,8 +74,12 @@ function onMobDeath(mob, killer, ally)
     if (LandKingSystem_NQ ~= 1) then
         SetServerVariable("[PH]King_Behemoth", 0);
         local Behemoth = mob:getID()-1;
-        DeterMob(Behemoth, false);
+        DisallowRespawn(Behemoth, false);
         UpdateNMSpawnPoint(Behemoth);
         GetMobByID(Behemoth):setRespawnTime(math.random(75600,86400));
+    end
+
+    if (LandKingSystem_NQ > 0 or LandKingSystem_HQ > 0) then
+        GetNPCByID(17297459):updateNPCHideTime(FORCE_SPAWN_QM_RESET_TIME);
     end
 end;

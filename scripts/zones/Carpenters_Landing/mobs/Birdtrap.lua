@@ -10,7 +10,14 @@ require("scripts/zones/Carpenters_Landing/MobIDs");
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
+function onMobDeath(mob, player, isKiller)
+end;
+
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
 
     -- Get Birdtrap ID and check if it is a PH of Orctrap
     local mobID = mob:getID();
@@ -22,8 +29,7 @@ function onMobDeath(mob,killer,ally)
         local Orctrap_ToD = GetServerVariable("[POP]Orctrap");
 
         -- Check if Orctrap window is open, and there is not an Orctrap popped already(ACTION_NONE = 0)
-        if (Orctrap_ToD <= os.time(t) and GetMobAction(Orctrap) == 0) then
-
+        if (Orctrap_ToD <= os.time() and GetMobAction(Orctrap) == 0) then
             -- printf("Orctrap window open");
             -- Give Birdtrap 5 percent chance to pop Orctrap
             if (math.random(1,20) == 5) then
@@ -31,7 +37,7 @@ function onMobDeath(mob,killer,ally)
                 UpdateNMSpawnPoint(Orctrap);
                 GetMobByID(Orctrap):setRespawnTime(GetMobRespawnTime(mobID));
                 SetServerVariable("[PH]Orctrap", mobID);
-                DeterMob(mobID, true);
+                DisallowRespawn(mobID, true);
             end
         end
     end

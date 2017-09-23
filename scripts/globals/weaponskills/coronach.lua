@@ -1,4 +1,5 @@
 -----------------------------------
+-- Coronach
 -- Skill Level: N/A
 -- Description: Additional effect: temporarily lowers enmity.
 -- Lowers Enmity for a certain amount of time. (Enmity -20)
@@ -19,7 +20,7 @@ require("scripts/globals/settings");
 require("scripts/globals/weaponskills");
 -----------------------------------
 
-function onUseWeaponSkill(player, target, wsID, tp, primary)
+function onUseWeaponSkill(player, target, wsID, tp, primary, action, taChar)
     local params = {};
     params.numHits = 1;
     params.ftp100 = 3; params.ftp200 = 3; params.ftp300 = 3;
@@ -33,10 +34,10 @@ function onUseWeaponSkill(player, target, wsID, tp, primary)
     params.overrideCE = 80;
     params.overrideVE = 240;
 
-    local damage, criticalHit, tpHits, extraHits = doRangedWeaponskill(player, target, wsID, params, tp, primary);
+    local damage, criticalHit, tpHits, extraHits = doRangedWeaponskill(player, target, wsID, params, tp, primary, action);
     -- TODO: Whoever codes those level 85 weapons with the latent that grants this WS needs to code a check to not give the aftermath effect.
     if (damage > 0) then
-        local amDuration = 20 * math.floor(player:getTP()/100);
+        local amDuration = 20 * math.floor(tp/1000);
         player:addStatusEffect(EFFECT_AFTERMATH, -20, 0, amDuration, 0, 11);
     end
 

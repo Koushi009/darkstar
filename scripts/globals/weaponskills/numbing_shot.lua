@@ -15,7 +15,7 @@ require("scripts/globals/settings");
 require("scripts/globals/weaponskills");
 -----------------------------------
 
-function onUseWeaponSkill(player, target, wsID, tp, primary)
+function onUseWeaponSkill(player, target, wsID, tp, primary, action, taChar)
 
     local params = {};
     params.numHits = 1;
@@ -30,11 +30,10 @@ function onUseWeaponSkill(player, target, wsID, tp, primary)
         params.agi_wsc = 0.8;
     end
 
-    local damage, criticalHit, tpHits, extraHits = doRangedWeaponskill(player, target, wsID, params, tp, primary);
+    local damage, criticalHit, tpHits, extraHits = doRangedWeaponskill(player, target, wsID, params, tp, primary, action);
 
     if (damage > 0) then
-        local tp = player:getTP();
-        local duration = (tp/100 * 60)
+        local duration = (tp/1000 * 60)
         if (target:hasStatusEffect(EFFECT_PARALYSIS) == false) then
             target:addStatusEffect(EFFECT_PARALYSIS, 30, 0, duration);
         end

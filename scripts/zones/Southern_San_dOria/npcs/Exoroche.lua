@@ -3,27 +3,26 @@
 -- NPC:  Exoroche
 -- Involved in Quests: Father and Son, A Boy's Dream
 -- @zone 230
--- @pos 72 -1 60
+-- !pos 72 -1 60
 
 -----------------------------------
 package.loaded["scripts/zones/Southern_San_dOria/TextIDs"] = nil;
 -----------------------------------
-
+require("scripts/zones/Southern_San_dOria/TextIDs");
 require("scripts/globals/settings");
 require("scripts/globals/quests");
-require("scripts/zones/Southern_San_dOria/TextIDs");
 
 -----------------------------------
 -- onTrade Action
 -----------------------------------
 
 function onTrade(player,npc,trade)
--- "Flyers for Regine" conditional script
-FlyerForRegine = player:getQuestStatus(SANDORIA,FLYERS_FOR_REGINE);
+    -- "Flyers for Regine" conditional script
+    local FlyerForRegine = player:getQuestStatus(SANDORIA,FLYERS_FOR_REGINE);
 
     if (FlyerForRegine == 1) then
-        count = trade:getItemCount();
-        MagicFlyer = trade:hasItemQty(532,1);
+        local count = trade:getItemCount();
+        local MagicFlyer = trade:hasItemQty(532,1);
         if (MagicFlyer == true and count == 1) then
             player:messageSpecial(FLYER_REFUSED);
         end
@@ -35,7 +34,7 @@ end;
 -----------------------------------
 
 function onTrigger(player,npc)
-  
+
 --    player:startEvent(0x004f)  -- how the paper works -- under oath
 --    player:startEvent(0x0033)  -- it says what i dont beleive you -- under oath
 --    player:startEvent(0x0013)  -- thanks for your help i have to tell trion -- under oath
@@ -43,9 +42,9 @@ function onTrigger(player,npc)
 -- "Father and Son" Event Dialogs
     if (player:getQuestStatus(SANDORIA,FATHER_AND_SON) == QUEST_ACCEPTED) then
         player:startEvent(0x021e);
-    elseif (player:getVar("aBoysDreamCS") == 2) then 
+    elseif (player:getVar("aBoysDreamCS") == 2) then
         player:startEvent(0x0032);
-    elseif (player:getVar("aBoysDreamCS") >= 7) then 
+    elseif (player:getVar("aBoysDreamCS") >= 7) then
         player:startEvent(0x0020);
     elseif (player:getVar("UnderOathCS") == 4 and player:hasKeyItem(STRANGE_SHEET_OF_PAPER)) then
         player:startEvent(0x004D);
@@ -66,8 +65,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -75,8 +74,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
     if (csid == 0x021e) then
         player:setVar("QuestfatherAndSonVar",1);
     elseif (csid == 0x0032) then

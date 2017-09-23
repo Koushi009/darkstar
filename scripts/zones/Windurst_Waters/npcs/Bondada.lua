@@ -1,10 +1,8 @@
 -----------------------------------
---    Area: Windurst Waters
---    NPC: Bondada
---    Involved in Quests: Hat in Hand
---    Working 100%
---  @zone = 238
---  @pos = -66 -3 -148
+-- Area: Windurst Waters
+-- NPC: Bondada
+-- Involved in Quests: Hat in Hand
+-- !pos -66 -3 -148 238
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Walls/TextIDs"] = nil;
 -----------------------------------
@@ -44,8 +42,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -53,8 +51,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
     if (csid == 0x003d) then  -- Show Off Hat
         player:setVar("QuestHatInHand_var",player:getVar("QuestHatInHand_var")+128);
         player:setVar("QuestHatInHand_count",player:getVar("QuestHatInHand_count")+1);

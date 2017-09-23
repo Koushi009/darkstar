@@ -2,9 +2,9 @@
 --  Area: Rabao
 --   NPC: Dancing Wolf
 --  Type: Standard NPC
--- @zone: 247
---  @pos 7.619 7 81.209
--- 
+-- @zone 247
+-- !pos 7.619 7 81.209
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Rabao/TextIDs"] = nil;
@@ -31,7 +31,7 @@ player:startEvent(0x0068);
 elseif (player:getVar("BASTOK91") == 4) then
 player:startEvent(0x0069);
 else
-player:startEvent(0x006A);    
+player:startEvent(0x006A);
 end
 end;
 -----------------------------------
@@ -48,8 +48,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
--- printf("CSID: %u",csid);
--- printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 if (csid == 0x0066) then
 player:setVar("BASTOK91",2);
 elseif (csid == 0x0068) then

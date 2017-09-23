@@ -20,11 +20,11 @@ end;
 -- onUseAbility
 -----------------------------------
 
-function onUseAbility(player,target,ability)
+function onUseAbility(player,target,ability,action)
     local thfLevel;
     local gil = 0;
 
-    if (player:getMainJob() == JOB_THF) then
+    if (player:getMainJob() == JOBS.THF) then
         thfLevel = player:getMainLvl();
     else
         thfLevel = player:getSubLvl();
@@ -49,16 +49,14 @@ function onUseAbility(player,target,ability)
         if (gil <= 0) then
             ability:setMsg(244);
         else
-            if (player:getEquipID(SLOT_HEAD) == 15077) then
-                gil = gil * 2;
-            end
-
+            gil = gil * (1 + player:getMod(MOD_MUG_EFFECT));
             player:addGil(gil);
             target:setMobMod(MOBMOD_MUG_GIL, target:getMobMod(MOBMOD_MUG_GIL) - gil);
             ability:setMsg(129);
         end
     else
         ability:setMsg(244);
+        action:animation(target:getID(), 184);
     end
 
     return gil;

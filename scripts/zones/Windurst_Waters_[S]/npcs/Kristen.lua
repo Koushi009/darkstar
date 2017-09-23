@@ -2,9 +2,9 @@
 --  Area: Windurst Waters (S)
 --   NPC: Kristen
 --  Type: Standard NPC
--- @zone: 94
---  @pos 2.195 -2 60.296
--- 
+-- @zone 94
+-- !pos 2.195 -2 60.296
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters_[S]/TextIDs"] = nil;

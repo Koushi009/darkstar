@@ -5,6 +5,7 @@
 
 require("scripts/globals/titles");
 require("scripts/globals/status");
+require("scripts/globals/pathfind");
 
 local path = {
     -539, 0, -481,
@@ -70,5 +71,5 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
 end;

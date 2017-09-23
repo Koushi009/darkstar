@@ -3,11 +3,10 @@
 -- NPC:  Balasiel
 -- Starts and Finishes: A Squire's Test, A Squire's Test II, A Knight's Test
 -- @zone 230
--- @pos -136 -11 64
+-- !pos -136 -11 64
 -------------------------------------
 package.loaded["scripts/zones/Southern_San_dOria/TextIDs"] = nil;
 -----------------------------------
-
 require("scripts/globals/settings");
 require("scripts/globals/titles");
 require("scripts/globals/keyitems");
@@ -57,7 +56,7 @@ function onTrigger(player,npc)
         player:startEvent(0x029f);
     elseif (LvL >= 15 and ASquiresTestII ~= QUEST_COMPLETED) then
         local StalactiteDew = player:hasKeyItem(STALACTITE_DEW)
-        
+
         if (ASquiresTestII == QUEST_AVAILABLE) then
             player:startEvent(0x0271);
         elseif (ASquiresTestII == QUEST_ACCEPTED and StalactiteDew == false) then
@@ -84,7 +83,7 @@ function onTrigger(player,npc)
     else
         player:startEvent(0x029b);
     end
-    
+
 end;
 
 -----------------------------------
@@ -92,8 +91,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -101,15 +100,15 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x0268) then
         if (option == 0) then
             player:addQuest(SANDORIA,A_SQUIRE_S_TEST);
         else
             player:setVar("SquiresTest_Event",1);
-        end 
+        end
     elseif (csid == 0x0277 and option == 0) then
         player:addQuest(SANDORIA,A_SQUIRE_S_TEST);
         player:setVar("SquiresTest_Event",0);
@@ -119,7 +118,7 @@ function onEventFinish(player,csid,option)
             player:addTitle(KNIGHT_IN_TRAINING);
             player:addItem(16565);
             player:messageSpecial(ITEM_OBTAINED, 16565); -- Spatha
-            player:addFame(SANDORIA,SAN_FAME*30);
+            player:addFame(SANDORIA,30);
             player:completeQuest(SANDORIA,A_SQUIRE_S_TEST);
         else
            player:messageSpecial(ITEM_CANNOT_BE_OBTAINED, 16565); -- Spatha
@@ -132,7 +131,7 @@ function onEventFinish(player,csid,option)
         player:delKeyItem(STALACTITE_DEW);
         player:addKeyItem(SQUIRE_CERTIFICATE);
         player:messageSpecial(KEYITEM_OBTAINED, SQUIRE_CERTIFICATE);
-        player:addFame(SANDORIA,SAN_FAME*30);
+        player:addFame(SANDORIA,30);
         player:completeQuest(SANDORIA,A_SQUIRE_S_TEST_II);
     elseif (csid == 0x0273) then
         if (option == 0) then
@@ -158,7 +157,7 @@ function onEventFinish(player,csid,option)
             player:messageSpecial(ITEM_OBTAINED, 12306); -- Kite Shield
             player:unlockJob(7); --Paladin
             player:messageSpecial(UNLOCK_PALADIN);
-            player:addFame(SANDORIA,SAN_FAME*30);
+            player:addFame(SANDORIA,30);
             player:completeQuest(SANDORIA,A_KNIGHT_S_TEST);
         else
            player:messageSpecial(ITEM_CANNOT_BE_OBTAINED, 12306); -- Kite Shield
@@ -166,12 +165,12 @@ function onEventFinish(player,csid,option)
     elseif (csid == 63) then
         player:setVar("KnightStalker_Progress",3);
     end
-    
+
 end;
 --    player:startEvent(0x7fb2)     -- starlight celebration
---    player:startEvent(0x000a)     -- methods create madness you havent used the weapon to full extent 
+--    player:startEvent(0x000a)     -- methods create madness you havent used the weapon to full extent
 --    player:startEvent(0x0008)      -- methods create madness start
 --    player:startEvent(0x000b)      -- methods create nadness menu
---    player:startEvent(0x0009)      -- methods create madness map 
---    player:startEvent(0x000c)     -- methods create madness map reminder  
+--    player:startEvent(0x0009)      -- methods create madness map
+--    player:startEvent(0x000c)     -- methods create madness map reminder
 --    player:startEvent(0x000d)     -- methods create madness end

@@ -2,9 +2,9 @@
 --  Area: Kazham
 --   NPC: Swift
 --  Type: Standard NPC
--- @zone: 250
---  @pos 2.017 -5 -1.880
--- 
+-- @zone 250
+-- !pos 2.017 -5 -1.880
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Kazham/TextIDs"] = nil;

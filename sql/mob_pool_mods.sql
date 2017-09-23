@@ -193,14 +193,6 @@ INSERT INTO `mob_pool_mods` VALUES (1851,16,1,1);
 INSERT INTO `mob_pool_mods` VALUES (1851,32,1,1);
 
 -- -------------------------
---  Antlion MOBMOD_SPECIAL_SKILL Pit_Ambush 
--- -------------------------
-INSERT INTO `mob_pool_mods` VALUES (586,30,278,1); -- Burrow Antlion 
-INSERT INTO `mob_pool_mods` VALUES (3141,30,278,1); -- Pit Antlion 
-INSERT INTO `mob_pool_mods` VALUES (3996,30,278,1); -- Trench Antlion 
-INSERT INTO `mob_pool_mods` VALUES (662,30,278,1); -- Cave Antlion 
-
--- -------------------------
 --  Race Runner
 -- -------------------------
 INSERT INTO `mob_pool_mods` VALUES (3301, 29, 100, 0); -- Magic Def 
@@ -281,6 +273,13 @@ INSERT INTO `mob_pool_mods` VALUES (1750,56,1,1);
 INSERT INTO `mob_pool_mods` VALUES (680,1,322,0); -- 650 defense total
 INSERT INTO `mob_pool_mods` VALUES (680,31,200,0); -- 120 magic evasion boost recommended but 200 felt more retail
 INSERT INTO `mob_pool_mods` VALUES (680,251,-50,0); -- he shouldn't be so resistant to stun, tho this is a systemic stun problem, this is a hack
+
+-- Variable Hare 10% exp bonus
+INSERT INTO `mob_pool_mods` VALUES (4204,28,10,1);
+
+-- Morbolger
+INSERT INTO `mob_pool_mods` VALUES (2742,37,1,1);
+
 
 /*!40000 ALTER TABLE `mob_pool_mods` ENABLE KEYS */;
 UNLOCK TABLES;

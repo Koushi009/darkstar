@@ -1,7 +1,7 @@
 -----------------------------------------
---    ID: 5440
---    Dusty Wing
---    Increases TP of the user by 300
+-- ID: 5440
+-- Dusty Wing
+-- Increases TP of the user by 300
 -----------------------------------------
 
 -----------------------------------------
@@ -17,5 +17,5 @@ end;
 -----------------------------------------
 
 function onItemUse(target)
-    target:addTP(300);
+    target:addTP(3000);
 end;

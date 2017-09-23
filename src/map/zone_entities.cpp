@@ -34,7 +34,7 @@ This file is part of DarkStar-server source code.
 #include "trade_container.h"
 
 #include "ai/ai_container.h"
-#include "ai/controllers/ai_controller.h"
+#include "ai/controllers/mob_controller.h"
 
 #include "entities/mobentity.h"
 #include "entities/npcentity.h"
@@ -79,6 +79,15 @@ void CZoneEntities::InsertPC(CCharEntity* PChar)
 {
     m_charList[PChar->targid] = PChar;
     ShowDebug(CL_CYAN"CZone:: %s IncreaseZoneCounter <%u> %s \n" CL_RESET, m_zone->GetName(), m_charList.size(), PChar->GetName());
+}
+
+void CZoneEntities::InsertAlly(CBaseEntity* PMob)
+{
+    if ((PMob != nullptr) && (PMob->objtype == TYPE_MOB))
+    {
+        PMob->loc.zone = m_zone;
+        m_allyList[PMob->targid] = PMob;
+    }
 }
 
 void CZoneEntities::InsertMOB(CBaseEntity* PMob)
@@ -214,7 +223,7 @@ void CZoneEntities::WeatherChange(WEATHER weather)
 
         PCurrentMob->PAI->EventHandler.triggerListener("WEATHER_CHANGE", PCurrentMob, static_cast<int>(weather), element);
         // can't detect by scent in this weather
-        if (PCurrentMob->m_Aggro & AGGRO_SCENT)
+        if (PCurrentMob->m_Detects & DETECT_SCENT)
         {
             PCurrentMob->m_disableScent = (weather == WEATHER_RAIN || weather == WEATHER_SQUALL || weather == WEATHER_BLIZZARDS);
         }
@@ -253,7 +262,7 @@ void CZoneEntities::WeatherChange(WEATHER weather)
     {
         CCharEntity* PChar = (CCharEntity*)it->second;
 
-        PChar->PLatentEffectContainer->CheckLatentsZone();
+        PChar->PLatentEffectContainer->CheckLatentsWeather(weather);
         PChar->PAI->EventHandler.triggerListener("WEATHER_CHANGE", PChar, static_cast<int>(weather), element);
     }
 }
@@ -273,7 +282,7 @@ void CZoneEntities::DecreaseZoneCounter(CCharEntity* PChar)
         else {
             PChar->PPet->status = STATUS_DISAPPEAR;
             if (((CPetEntity*)(PChar->PPet))->getPetType() == PETTYPE_AVATAR)
-                PChar->setModifier(MOD_AVATAR_PERPETUATION, 0);
+                PChar->setModifier(Mod::AVATAR_PERPETUATION, 0);
         }
         // It may have been nullptred by DespawnPet
         if (PChar->PPet != nullptr) {
@@ -346,11 +355,15 @@ void CZoneEntities::DecreaseZoneCounter(CCharEntity* PChar)
     for (auto PMobIt : m_mobList)
     {
         CMobEntity* PCurrentMob = (CMobEntity*)PMobIt.second;
-        PCurrentMob->PEnmityContainer->Clear(PChar->id);
+        PCurrentMob->PEnmityContainer->LogoutReset(PChar->id);
         if (PCurrentMob->m_OwnerID.id == PChar->id)
         {
             PCurrentMob->m_OwnerID.clean();
             PCurrentMob->updatemask |= UPDATE_STATUS;
+        }
+        if (PCurrentMob->GetBattleTargetID() == PChar->targid)
+        {
+            PCurrentMob->SetBattleTargetID(0);
         }
     }
 
@@ -410,7 +423,7 @@ void CZoneEntities::SpawnMOBs(CCharEntity* PChar)
 
         float CurrentDistance = distance(PChar->loc.p, PCurrentMob->loc.p);
 
-        if (PCurrentMob->status == STATUS_MOB &&
+        if (PCurrentMob->status != STATUS_DISAPPEAR &&
             CurrentDistance < 50)
         {
             if (MOB == PChar->SpawnMOBList.end() ||
@@ -427,13 +440,13 @@ void CZoneEntities::SpawnMOBs(CCharEntity* PChar)
 
             uint16 expGain = (uint16)charutils::GetRealExp(PChar->GetMLevel(), PCurrentMob->GetMLevel());
 
-            CAIController* PController = static_cast<CAIController*>(PCurrentMob->PAI->GetController());
+            CMobController* PController = static_cast<CMobController*>(PCurrentMob->PAI->GetController());
 
             bool validAggro = expGain > 50 || PChar->animation == ANIMATION_HEALING || PCurrentMob->getMobMod(MOBMOD_ALWAYS_AGGRO);
 
             if (validAggro && PController->CanAggroTarget(PChar))
             {
-                PCurrentMob->PEnmityContainer->AddAggroEnmity(PChar);
+                PCurrentMob->PEnmityContainer->AddBaseEnmity(PChar);
             }
         }
         else
@@ -910,7 +923,7 @@ void CZoneEntities::WideScan(CCharEntity* PChar, uint16 radius)
     for (EntityList_t::const_iterator it = m_npcList.begin(); it != m_npcList.end(); ++it)
     {
         CNpcEntity* PNpc = (CNpcEntity*)it->second;
-        if (PNpc->status == STATUS_NORMAL && !PNpc->IsNameHidden() && !PNpc->IsUntargetable())
+        if (PNpc->status == STATUS_NORMAL && !PNpc->IsNameHidden() && !PNpc->IsUntargetable() && PNpc->widescan == 1)
         {
             if (distance(PChar->loc.p, PNpc->loc.p) < radius)
             {
@@ -938,6 +951,11 @@ void CZoneEntities::ZoneServer(time_point tick)
     {
         CMobEntity* PMob = (CMobEntity*)it->second;
 
+        if (PMob->PBCNM && PMob->PBCNM->cleared())
+        {
+            continue;
+        }
+
         PMob->StatusEffectContainer->CheckEffects(tick);
         PMob->PAI->Tick(tick);
         PMob->StatusEffectContainer->CheckRegen(tick);
@@ -964,7 +982,7 @@ void CZoneEntities::ZoneServer(time_point tick)
                 CMobEntity* PCurrentMob = (CMobEntity*)PMobIt.second;
                 PCurrentMob->PEnmityContainer->Clear(PPet->id);
             }
-            if (PPet->getPetType() != PETTYPE_AUTOMATON)
+            if (PPet->getPetType() != PETTYPE_AUTOMATON || !PPet->PMaster)
             {
                 delete pit->second;
             }
@@ -1022,6 +1040,12 @@ void CZoneEntities::ZoneServerRegion(time_point tick)
             m_zone->CheckRegions(PChar);
         }
     }
+}
+
+
+CZone* CZoneEntities::GetZone()
+{
+    return m_zone;
 }
 
 EntityList_t CZoneEntities::GetCharList()

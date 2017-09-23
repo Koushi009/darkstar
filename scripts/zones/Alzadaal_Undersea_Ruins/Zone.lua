@@ -5,9 +5,11 @@
 -----------------------------------
 package.loaded["scripts/zones/Alzadaal_Undersea_Ruins/TextIDs"] = nil;
 -----------------------------------
-
-require("scripts/globals/settings");
 require("scripts/zones/Alzadaal_Undersea_Ruins/TextIDs");
+require("scripts/globals/missions");
+require("scripts/globals/besieged");
+require("scripts/globals/settings");
+require("scripts/globals/titles");
 
 -----------------------------------
 -- onInitialize
@@ -36,7 +38,7 @@ function onInitialize(zone)
     zone:registerRegion(20, 550, -2, 522, 557, 0, 529);  -- map 11 west porter (white)
     zone:registerRegion(21,-556, -2,-489,-550, 0,-483);  -- map 12 east porter (white)
     zone:registerRegion(22,-610, -2,-489,-603, 0,-483);  -- map 12 west porter (blue)
-zone:registerRegion(23,382, -1,-582,399, 1,-572); --mission 9 TOAU
+    zone:registerRegion(23,382, -1,-582,399, 1,-572);    -- mission 9 TOAU
 end;
 
 -----------------------------------
@@ -48,6 +50,13 @@ function onZoneIn(player,prevZone)
     if (player:getXPos() == 0 and player:getYPos() == 0 and player:getZPos() == 0) then
         player:setPos(222.798, -0.5, 19.872, 0);
     end
+
+    if (player:getCurrentMission(TOAU) == PATH_OF_DARKNESS and player:getVar("AhtUrganStatus") == 2) then
+        cs = 7;
+    elseif (player:getCurrentMission(TOAU) == NASHMEIRAS_PLEA and player:getVar("AhtUrganStatus") == 2) then
+        cs = 10;
+    end
+
     return cs;
 end;
 
@@ -69,75 +78,75 @@ function onRegionEnter(player,region)
     switch (region:GetRegionID()): caseof
     {
         [1] = function (x)
-            player:startEvent(0x00CC);
+            player:startEvent(204);
         end,
         [2] = function (x)
-            player:startEvent(0x00CD);
+            player:startEvent(205);
         end,
         [3] = function (x)
-            player:startEvent(0x00C9);
+            player:startEvent(201);
         end,
         [4] = function (x)
-            player:startEvent(0x00CB);
+            player:startEvent(203);
         end,
         [5] = function (x)
-            player:startEvent(0x00CA);
+            player:startEvent(202);
         end,
         [6] = function (x)
-            player:startEvent(0x00CE);
+            player:startEvent(206);
         end,
         [7] = function (x)
-            player:startEvent(0x00D3);
+            player:startEvent(211);
         end,
         [8] = function (x)
-            player:startEvent(0x00C8);
+            player:startEvent(200);
         end,
         [9] = function (x)
-            player:startEvent(0x00C9);
+            player:startEvent(201);
         end,
         [10] = function (x)
-            player:startEvent(0x00D5);
+            player:startEvent(213);
         end,
         [11] = function (x)
-            player:startEvent(0x00DA);
+            player:startEvent(218);
         end,
         [12] = function (x)
-            player:startEvent(0x00DD);
+            player:startEvent(221);
         end,
         [13] = function (x)
-            player:startEvent(0x00DB);
+            player:startEvent(219);
         end,
         [14] = function (x)
-            player:startEvent(0x00DC);
+            player:startEvent(220);
         end,
         [15] = function (x)
-            player:startEvent(0x00CF);
+            player:startEvent(207);
         end,
         [16] = function (x)
-            player:startEvent(0x00D0);
+            player:startEvent(208);
         end,
         [17] = function (x)
-            player:startEvent(0x00D6);
+            player:startEvent(214);
         end,
         [18] = function (x)
-            player:startEvent(0x00CF);
+            player:startEvent(207);
         end,
         [19] = function (x)
-            player:startEvent(0x00CA);
+            player:startEvent(202);
         end,
         [20] = function (x)
-            player:startEvent(0x00CF);
+            player:startEvent(207);
         end,
         [21] = function (x)
-            player:startEvent(0x00CF);
+            player:startEvent(207);
         end,
         [22] = function (x)
-            player:startEvent(0x00D2);
+            player:startEvent(210);
         end,
         [23] = function (x)
-        if (player:getCurrentMission(TOAU) == UNDERSEA_SCOUTING and player:getVar("TOAUM9") ==0) then
-            player:startEvent(0x0001);
-        end
+            if (player:getCurrentMission(TOAU) == UNDERSEA_SCOUTING) then
+                player:startEvent(1, getMercenaryRank(player));
+            end
         end,
     }
 end;
@@ -154,15 +163,20 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
-     printf("CSID: %u",csid);
-     printf("RESULT: %u",option);
-if (csid == 0x0001 and option == 10) then
-   player:updateEvent(1,0,0,0,0,0,0);
-elseif (csid == 0x0001 and option == 2) then
-   player:updateEvent(3,0,0,0,0,0,0);
-elseif (csid == 0x0001 and option == 3) then
-   player:updateEvent(7,0,0,0,0,0,0);    
-end
+    -- printf("UPDATE CSID: %u",csid);
+    -- printf("UPDATE RESULT: %u",option);
+    if (csid == 1 and option == 10) then -- start
+        player:updateEvent(0,0,0,0,0,0,0,0);
+    elseif (csid == 1 and option == 1) then -- windows
+        player:setLocalVar("UnderseaScouting", player:getLocalVar("UnderseaScouting")+1);
+        player:updateEvent(player:getLocalVar("UnderseaScouting"),0,0,0,0,0,0,0);
+    elseif (csid == 1 and option == 2) then -- pillars
+        player:setLocalVar("UnderseaScouting", player:getLocalVar("UnderseaScouting")+2);
+        player:updateEvent(player:getLocalVar("UnderseaScouting"),0,0,0,0,0,0,0);
+    elseif (csid == 1 and option == 3) then -- floor
+        player:setLocalVar("UnderseaScouting", player:getLocalVar("UnderseaScouting")+4);
+        player:updateEvent(player:getLocalVar("UnderseaScouting"),0,0,0,0,0,0,0);
+    end
 end;
 
 -----------------------------------
@@ -170,13 +184,22 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
-     printf("CSID: %u",csid);
-     printf("RESULT: %u",option);
-if (csid ==0x0001) then
-    player:addKeyItem(ASTRAL_COMPASS);
-    player:messageSpecial(KEYITEM_OBTAINED,ASTRAL_COMPASS);
-    player:setVar("TOAUM9",0);
-    player:completeMission(TOAU,UNDERSEA_SCOUTING);
-    player:addMission(TOAU,ASTRAL_WAVES);
-end
+    -- printf("FINISH CSID: %u",csid);
+    -- printf("FINISH RESULT: %u",option);
+    if (csid == 1) then
+        player:addKeyItem(ASTRAL_COMPASS);
+        player:completeMission(TOAU,UNDERSEA_SCOUTING);
+        player:addMission(TOAU,ASTRAL_WAVES);
+        player:messageSpecial(KEYITEM_OBTAINED,ASTRAL_COMPASS);
+    elseif (csid == 7) then
+        player:completeMission(TOAU,PATH_OF_DARKNESS);
+        player:setTitle(NAJAS_COMRADEINARMS);
+        player:setVar("AhtUrganStatus",0);
+        player:addMission(TOAU,FANGS_OF_THE_LION);
+    elseif (csid == 10) then
+        player:completeMission(TOAU,NASHMEIRAS_PLEA);
+        player:setTitle(PREVENTER_OF_RAGNAROK);
+        player:setVar("AhtUrganStatus",0);
+        player:addMission(TOAU,RAGNAROK);
+    end
 end;

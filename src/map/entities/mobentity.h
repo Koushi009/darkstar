@@ -78,18 +78,18 @@ enum MOBTYPE
     MOBTYPE_EVENT       = 0x20
 };
 
-enum AGGRO : uint16
+enum DETECT : uint16
 {
-    AGGRO_NONE               = 0x00,
-    AGGRO_DETECT_SIGHT       = 0x01,
-    AGGRO_DETECT_HEARING     = 0x02,
-    AGGRO_DETECT_LOWHP       = 0x04,
-    AGGRO_DETECT_TRUEHEARING = 0x08,
-    AGGRO_DETECT_TRUESIGHT   = 0x10,
-    AGGRO_DETECT_MAGIC       = 0x20,
-    AGGRO_DETECT_WEAPONSKILL = 0x40,
-    AGGRO_DETECT_JOBABILITY  = 0x80,
-    AGGRO_SCENT              = 0x100
+    DETECT_NONE        = 0x00,
+    DETECT_SIGHT       = 0x01,
+    DETECT_HEARING     = 0x02,
+    DETECT_LOWHP       = 0x04,
+    DETECT_NONE1       = 0x08,
+    DETECT_NONE2       = 0x10,
+    DETECT_MAGIC       = 0x20,
+    DETECT_WEAPONSKILL = 0x40,
+    DETECT_JOBABILITY  = 0x80,
+    DETECT_SCENT       = 0x100
 };
 
 enum BEHAVIOUR : uint16
@@ -117,7 +117,8 @@ public:
     CMobEntity();
     ~CMobEntity();
 
-    void      setMobFlags(uint32 MobFlags);            // Change the current value in m_flags
+    uint32    getEntityFlags();                        // Returns the current value in m_flags
+    void      setEntityFlags(uint32 EntityFlags);      // Change the current value in m_flags
 
     bool      hasRageMode();                           // If the mob has the rage mode: true
     void      addRageMode();                           // Rage mode ON:  stat x10
@@ -138,8 +139,8 @@ public:
     bool      CanLink(position_t* pos, int16 superLink = 0);
 
     bool      CanDropGil();                            // mob has gil to drop
-    bool      CanStealGil();                            // can steal gil from mob
-    void      ResetGilPurse();                          // reset total gil held
+    bool      CanStealGil();                           // can steal gil from mob
+    void      ResetGilPurse();                         // reset total gil held
 
     void      setMobMod(uint16 type, int16 value);
     int16     getMobMod(uint16 type);
@@ -164,14 +165,21 @@ public:
     float     GetRoamRate();
     virtual bool ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags) override;
 
-    virtual void HandleErrorMessage(std::unique_ptr<CMessageBasicPacket>&) override {}
+    virtual void HandleErrorMessage(std::unique_ptr<CBasicPacket>&) override {}
     virtual void Die() override;
 
     virtual void OnWeaponSkillFinished(CWeaponSkillState&, action_t&) override;
     virtual void OnMobSkillFinished(CMobSkillState&, action_t&);
     virtual void OnEngage(CAttackState&) override;
+
+    virtual bool OnAttack(CAttackState&, action_t&);
+    virtual bool CanAttack(CBattleEntity* PTarget, std::unique_ptr<CBasicPacket>& errMsg) override;
+    virtual void OnCastFinished(CMagicState&, action_t&);
+
     virtual void OnDisengage(CAttackState&) override;
-    virtual void OnDeathTimer() override;
+    virtual void OnDeathTimer() override;public:
+
+    virtual void OnDespawn(CDespawnState&) override;
 
     virtual void Spawn() override;
     virtual void FadeOut() override;
@@ -214,7 +222,9 @@ public:
     float     m_maxRoamDistance;          // maximum distance mob can be from spawn before despawning
 
     uint8     m_Type;                     // mob type
-    uint16	  m_Aggro;					  // mob aggro type
+    bool	  m_Aggro;
+    bool	  m_TrueDetection;   // Has true sight or sound
+    uint16	  m_Detects;                // mobs detection methods, sight, sound, etc
     uint8     m_Link;                     // link with mobs of it's family
     uint16    m_Behaviour;                // mob behaviour
     SPAWNTYPE m_SpawnType;                // condition for mob to spawn
@@ -239,6 +249,7 @@ public:
 
     uint32    m_flags;                                 // includes the CFH flag and whether the HP bar should be shown or not (e.g. Yilgeban doesnt)
     uint8     m_name_prefix;                           // The ding bats VS Ding bats
+    string_t  packetName;                              // Used for battle allies
 
     CEnmityContainer* PEnmityContainer;                // система ненависти монстров
 
@@ -251,6 +262,8 @@ public:
 protected:
 
     void DropItems();
+
+
 
 private:
 

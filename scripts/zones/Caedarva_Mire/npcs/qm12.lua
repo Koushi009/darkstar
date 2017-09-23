@@ -1,7 +1,7 @@
 -----------------------------------
 -- Area: Caedarva Mire
--- NPC:  ??? 
--- @pos 456.993 -7.000 -270.815 79
+-- NPC:  ???
+-- !pos 456.993 -7.000 -270.815 79
 -----------------------------------
 package.loaded["scripts/zones/Caedarva_Mire/TextIDs"] = nil;
 -----------------------------------
@@ -12,7 +12,7 @@ require("scripts/zones/Caedarva_Mire/TextIDs");
 -- onTrade Action
 -----------------------------------
 
-function onTrade(player,npc,trade)    
+function onTrade(player,npc,trade)
 end;
 
 -----------------------------------
@@ -27,7 +27,7 @@ function onTrigger(player,npc)
         player:startEvent(0x0011);
     elseif (player:getVar("notmeanttobeMoshdahnKilled") == 1 and player:getVar("notmeanttobeLamia27Killed") == 1) then
         player:startEvent(0x0012);
-    else        
+    else
         player:messageSpecial(NOTHING_HAPPENS);
     end
 end;
@@ -37,8 +37,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
--- printf("CSID: %u",csid);
--- printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
 end;
 
@@ -47,8 +47,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
--- printf("CSID: %u",csid);
--- printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
     if (csid == 0x0010) then
         player:setVar("notmeanttobeCS",2);
     elseif (csid == 0x0011) then

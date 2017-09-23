@@ -44,6 +44,8 @@ ipch/
 *.ncb
 *.opensdf
 *.sdf
+*.opendb
+*.VC.db
 
 # Visual Studio profiler
 *.psess
@@ -155,3 +157,6 @@ log/DSP.leaks
 #Lua Developement Tools project files
 .metadata/**
 .project
+.vs
+/win32/.vs/darkstar/v15
+

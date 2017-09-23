@@ -1,9 +1,9 @@
 -----------------------------------
---  Area: Port Bastok
+-- Area: Port Bastok
 --   NPC: Kurando
 --  Type: Quest Giver
--- @zone: 236
---  @pos -23.887 3.898 0.870
+-- @zone 236
+-- !pos -23.887 3.898 0.870
 --
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
@@ -38,7 +38,7 @@ function onTrigger(player,npc)
         player:startEvent(0x00AC); -- Dialogue after Completion
     else
         player:startEvent(0x001c); -- Default Dialogue
-        
+
     end
 end;
 -----------------------------------
@@ -64,14 +64,14 @@ function onEventFinish(player,csid,option)
     elseif (csid == 0x00AB) then
         if    (player:getFreeSlotsCount() == 0) then
             player:messageSpecial(ITEM_CANNOT_BE_OBTAINED,13113);
-        
+
         else
             player:tradeComplete();
             player:addItem(13113,1);
             player:messageSpecial(ITEM_OBTAINED,13113);
             player:setTitle(AIRSHIP_DENOUNCER);
             player:completeQuest(BASTOK,FEAR_OF_FLYING);
-            player:addFame(BASTOK,BAS_FAME*30);
-        end    
+            player:addFame(BASTOK,30);
+        end
     end
 end;

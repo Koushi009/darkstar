@@ -2,11 +2,10 @@
 -- Area: Bastok Mines
 -- NPC: Goraow
 -- Starts Quests: Vengeful Wrath
--- @pos 38 .1 14 234
+-- !pos 38 .1 14 234
 -----------------------------------
 package.loaded["scripts/zones/Bastok_Mines/TextIDs"] = nil;
 -----------------------------------
-
 require("scripts/globals/quests");
 require("scripts/globals/settings");
 require("scripts/globals/titles");
@@ -36,9 +35,9 @@ function onTrigger(player,npc)
 
     local Vengeful = player:getQuestStatus(BASTOK,VENGEFUL_WRATH);
     local Fame = player:getFameLevel(BASTOK);
-    
+
     local WildcatBastok = player:getVar("WildcatBastok");
-    
+
     if (player:getQuestStatus(BASTOK,LURE_OF_THE_WILDCAT_BASTOK) == QUEST_ACCEPTED and player:getMaskBit(WildcatBastok,16) == false) then
         player:startEvent(0x01fa);
     elseif (Vengeful == QUEST_AVAILABLE and Fame >= 3) then
@@ -53,8 +52,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID2: %u",csid);
---printf("RESULT2: %u",option);
+    -- printf("CSID2: %u",csid);
+    -- printf("RESULT2: %u",option);
 end;
 
 -----------------------------------
@@ -62,8 +61,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x006a) then
         player:addQuest(BASTOK, VENGEFUL_WRATH);
@@ -71,9 +70,9 @@ function onEventFinish(player,csid,option)
         Vengeful = player:getQuestStatus(BASTOK, VENGEFUL_WRATH);
         if (Vengeful == QUEST_ACCEPTED) then
             player:addTitle(95);
-            player:addFame(BASTOK,BAS_FAME*120);
+            player:addFame(BASTOK,120);
         else
-            player:addFame(BASTOK,BAS_FAME*8);
+            player:addFame(BASTOK,8);
         end
         player:tradeComplete();
         player:addGil(GIL_RATE*900);
@@ -83,7 +82,5 @@ function onEventFinish(player,csid,option)
         player:setMaskBit(player:getVar("WildcatBastok"),"WildcatBastok",16,true);
     end
 end;
-
-
 
 

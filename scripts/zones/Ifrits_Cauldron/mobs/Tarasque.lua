@@ -1,7 +1,7 @@
 -----------------------------------
 -- Area: Ifrit's Cauldron
 --  MOB: Tarasque
--- @pos 124 19 163 100
+-- !pos 124 19 163 100
 -----------------------------------
 
 -----------------------------------
@@ -15,7 +15,7 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
+function onMobDeath(mob, player, isKiller)
 end;
 
 -----------------------------------

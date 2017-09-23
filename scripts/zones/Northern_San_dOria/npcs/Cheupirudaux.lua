@@ -3,14 +3,13 @@
 --  NPC: Cheupirudaux
 -- Type: Woodworking Guildmaster NPC
 -- Involved in Quest: It's Raining Mannequins!
--- @pos -138 12 250 231
+-- !pos -138 12 250 231
 -----------------------------------
 package.loaded["scripts/zones/Northern_San_dOria/TextIDs"] = nil;
 -----------------------------------
-
-require("scripts/globals/status");
-require("scripts/globals/crafting");
 require("scripts/zones/Northern_San_dOria/TextIDs");
+require("scripts/globals/crafting");
+require("scripts/globals/status");
 
 -----------------------------------
 -- onTrade Action
@@ -35,7 +34,7 @@ function onTrigger(player,npc)
     local testItem = getTestItem(player,npc,SKILL_WOODWORKING);
     local guildMember = isGuildMember(player,9);
     if (guildMember == 1) then guildMember = 150995375; end
-    if (canGetNewRank(player,craftSkill,SKILLID) == 1) then getNewRank = 100; end
+    if (canGetNewRank(player,craftSkill,SKILL_WOODWORKING) == 1) then getNewRank = 100; end
 
     player:startEvent(0x026d,testItem,getNewRank,30,guildMember,44,0,0,0);
 end;
@@ -64,7 +63,7 @@ function onEventFinish(player,csid,option)
         else
             player:addItem(4098);
             player:messageSpecial(ITEM_OBTAINED,4098); -- Wind Crystal
-            signupGuild(player,512);
+            signupGuild(player, guild.woodworking);
         end
     end
 end;

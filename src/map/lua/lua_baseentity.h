@@ -50,16 +50,18 @@ public:
 
     int32 warp(lua_State*);                 // Returns Character to home point
     int32 leavegame(lua_State*);            // Character leaving game
-
+    int32 bringPlayer(lua_State*);          // warps target to self
+    int32 gotoPlayer(lua_State*);           // warps self to target player
     int32 getID(lua_State *L);              // Gets Entity Id
     int32 getShortID(lua_State *L);
     int32 getCursorTarget(lua_State *L);    // Returns the ID any object under players in game cursor.
     int32 getPool(lua_State *L);            // Returns a mobs pool ID. If entity is not a mob, returns nil.
     int32 getName(lua_State *L);            // Gets Entity Name
+    int32 getModelSize(lua_State *L);       // Gets model size
 
     int32 getHPP(lua_State*);               // Returns Entity Health %
     int32 getHP(lua_State*);                // Returns Entity Health
-    int32 getGender(lua_State*);			// Returns the player character's gender
+    int32 getGender(lua_State*);            // Returns the player character's gender
     int32 getBaseHP(lua_State*);            // Returns Entity base Health before modifiers
     int32 addHP(lua_State*);                // Modify hp of Entity +/-
     int32 restoreHP(lua_State*);            // Modify hp of Entity, but check if alive first
@@ -114,13 +116,15 @@ public:
     int32 setAnimation(lua_State*);         // Set Entity Animation
     int32 AnimationSub(lua_State*);         // get or set animationsub
     int32 costume(lua_State*);              // get or set user costume
-    int32 costume2(lua_State*);				// set monstrosity costume
+    int32 costume2(lua_State*);             // set monstrosity costume
     int32 canUseCostume(lua_State*);        // check to see if character can use costume, 0 if so
     int32 canUseChocobo(lua_State *L);      // check to see if character can use chocobo, 0 if so
     int32 canUsePet(lua_State *L);          // check to see if character can call pet, 0 if so
 
+    int32 addTreasure(lua_State*);          // Add item to directly to treasure pool
     int32 addItem(lua_State*);              // Add item to Entity inventory (additem(itemNumber,quantity))
     int32 hasItem(lua_State*);              // Check to see if Entity has item in inventory (hasItem(itemNumber))
+    int32 addUsedItem(lua_State*);          // Add charged item with timer already on full cooldown
     int32 addTempItem(lua_State*);          // Add temp item to Entity Temp inventory
     int32 delItem(lua_State*);
     int32 getFreeSlotsCount(lua_State*);    // Gets value of free slots in Entity inventory
@@ -180,8 +184,9 @@ public:
     int32 canLearnAbility(lua_State*);      // Check to see if character can learn spell, 0 if so
     int32 delLearnedAbility(lua_State*);    // Remove spell from Entity spell list
 
-    int32 addWeaponSkill(lua_State*);       //
-    int32 delWeaponSkill(lua_State*);       //
+    int32 addLearnedWeaponskill(lua_State*);
+    int32 hasLearnedWeaponskill(lua_State*);
+    int32 delLearnedWeaponskill(lua_State*);
 
     int32 getMainJob(lua_State*);           // Returns Entity Main Job
     int32 getMainLvl(lua_State*);           // Gets Entity Main Job Level
@@ -225,6 +230,7 @@ public:
     int32 getBCNMloot(lua_State*);                   //triggers if the player opens the chest inside bcnm
     int32 addPlayerToSpecialBattlefield(lua_State*); //for limbus
 
+    int32 isSpawned(lua_State*);
     int32 setSpawn(lua_State*);                // Sets spawn point
     int32 setRespawnTime(lua_State*);          // set respawn time
     int32 getDynamisUniqueID(lua_State*);      //Get unique Dynamis ID
@@ -300,6 +306,10 @@ public:
     int32 resetEnmity(lua_State*);          //resets enmity to player for specificed mob
     int32 lowerEnmity(lua_State*);          //lower enmity to player for specificed mob
     int32 transferEnmity(lua_State*);
+    int32 getCE(lua_State*);                //gets current CE the mob has towards the player
+    int32 getVE(lua_State*);                //gets current VE the mob has towards the player
+    int32 setCE(lua_State*);                //sets current CE the mob has towards the player
+    int32 setVE(lua_State*);                //sets current VE the mob has towards the player
 
     int32 hasImmunity(lua_State*);          // Check if the mob has immunity for a type of spell (list at mobentity.h)
     int32 getBattleTime(lua_State*);        // Get the time in second of the battle
@@ -313,7 +323,9 @@ public:
     int32 addStatusEffectEx(lua_State*);      // Adds status effect to character
     int32 hasStatusEffect(lua_State*);        // Checks to see if character has specified effect
     int32 hasStatusEffectByFlag(lua_State*);  // Checks to see if a character has an effect with the specified flag
+    int32 countEffect(lua_State*);            // Gets the number of effects of a specific type on the player
     int32 hasBustEffect(lua_State*);          // Checks to see if a character has a specified busted corsair roll
+    int32 numBustEffects(lua_State*);         // Gets the number of bust effects on the player
     int32 canGainStatusEffect(lua_State*);    // Returns true if the effect can be added
     int32 getStatusEffect(lua_State*);        //
     int32 getStatusEffects(lua_State*);
@@ -351,6 +363,8 @@ public:
 
     int32 getMobMod(lua_State*);
     int32 setMobMod(lua_State*);
+    int32 addMobMod(lua_State*);
+    int32 delMobMod(lua_State*);
 
     int32 hasTrait(lua_State*);
 
@@ -366,12 +380,12 @@ public:
     int32 despawnPet(lua_State*);            // Despawns Pet
     int32 petAttack(lua_State*);             // Despawns Pet
     int32 petRetreat(lua_State*);
-    int32 petStay(lua_State*);
     int32 petAbility(lua_State*);
     int32 hasPet(lua_State*);                // returns true if the player has a pet
     int32 getPet(lua_State*);                // Creates an LUA reference to a pet entity
     int32 getPetID(lua_State*);              // If the entity has a pet, returns the PetID to identify pet type.
     int32 isJugPet(lua_State*);              // If the entity has a pet, test if it is a jug pet.
+    int32 getCharmChance(lua_State*);        // Gets the chance the entity has to charm its target.
     int32 familiar(lua_State*);              // familiar on pet
 
     int32 wakeUp(lua_State*);                //wakes target if necessary
@@ -421,6 +435,7 @@ public:
     int32 resetRecast(lua_State*);          // Reset one recast ID
 
     int32 getCurrency(lua_State*);          // Get Currency
+    int32 setCurrency(lua_State*);          // Set Currency
     int32 addCurrency(lua_State*);          // Add Currency
     int32 delCurrency(lua_State*);          // Delete Currency
 
@@ -437,16 +452,15 @@ public:
     int32 delAssaultPoint(lua_State*);      // Delete points for an assault area
 
     int32 isJailed(lua_State *L);           // Is the player jailed
+    int32 jail(lua_State* L);
 
     int32 addNationTeleport(lua_State*);     // Add new teleport: addNationTeleport(nation,number)
     int32 getNationTeleport(lua_State*);     // Get teleport you can use by nation: getNationTeleport(nation)
 
     int32 checkDistance(lua_State*);           // Check Distacnce and returns distance number
-    int32 getBaseExp(lua_State*);
+    int32 checkValorCredit(lua_State*);
     int32 checkSoloPartyAlliance(lua_State*);  // Check if Player is in Party or Alliance 0=Solo 1=Party 2=Alliance
-    int32 checkExpPoints(lua_State*);          // Exp points penalty for Player vs Max High Player Gap in party
     int32 checkFovAllianceAllowed(lua_State*); // checks the map config, 1 if alliance is allowed to farm Fov pages
-    int32 checkFovDistancePenalty(lua_State*); // Checks whether FoV distance from mob penalty applies.
 
     int32 getObjType(lua_State*);
 
@@ -454,6 +468,7 @@ public:
     int32 isNPC(lua_State*);
     int32 isMob(lua_State*);
     int32 isPet(lua_State*);
+    int32 isAlly(lua_State*);
 
     int32 injectActionPacket(lua_State*);   // ONLY FOR DEBUGGING. Injects an action packet with the specified params.
     int32 setMobFlags(lua_State*);          // Used to manipulate the mob's flags for testing.
@@ -478,6 +493,7 @@ public:
 
     int32 setSpellList(lua_State*);
     int32 hasSpellList(lua_State*);
+    int32 hasPreventActionEffect(lua_State*);
 
     int32 hasValidJugPetItem(lua_State*);
     int32 getTarget(lua_State*);
@@ -526,6 +542,7 @@ public:
     int32 hideName(lua_State* L);
     int32 untargetable(lua_State* L);
     int32 hideHP(lua_State* L);
+    int32 hideModel(lua_State* L);
     int32 breathDmgTaken(lua_State* L);
     int32 magicDmgTaken(lua_State* L);
     int32 physicalDmgTaken(lua_State* L);
@@ -553,8 +570,8 @@ public:
     int32 reloadParty(lua_State* L);
     int32 getModelId(lua_State* L);
     int32 setModelId(lua_State* L);
-    int32 setAggroFlag(lua_State* L);
-    int32 unsetAggroFlag(lua_State* L);
+    int32 setTrueDetection(lua_State* L);
+    int32 setAggressive(lua_State* L);
     int32 instantiateMob(lua_State* L);
 
     int32 getActiveManeuvers(lua_State*);
@@ -582,6 +599,31 @@ public:
 
     int32 removeAmmo(lua_State* L);
     int32 takeWeaponskillDamage(lua_State* L);
+    int32 handleAfflatusMiseryDamage(lua_State* L);
+
+    int32 setEquipBlock(lua_State* L);
+    int32 setStatDebilitation(lua_State* L);
+    int32 unequipItem(lua_State* L);
+    int32 recalculateStats(lua_State* L);
+    int32 checkImbuedItems(lua_State* L);
+
+    int32 getNearbyEntities(lua_State* L);
+    int32 getAutomatonFrame(lua_State* L);
+    int32 getAutomatonHead(lua_State* L);
+
+    int32 getDropID(lua_State* L);
+    int32 setDropID(lua_State* L);
+
+    int32 resetAI(lua_State* L);
+    int32 getEntity(lua_State* L);
+
+    int32 canChangeState(lua_State* L);
+
+    int32 isAlive(lua_State* L);
+    int32 isDead(lua_State* L);
+
+    int32 engage(lua_State* L);
+    int32 disengage(lua_State* L);
 };
 
 #endif

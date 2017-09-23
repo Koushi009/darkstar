@@ -3,11 +3,10 @@
 -- NPC:  Narcheral
 -- Starts and Finishes Quest: Messenger from Beyond, Prelude of Black and White (Finish), Pieuje's Decision (Finish)
 -- @zone 231
--- @pos 129 -11 126
+-- !pos 129 -11 126
 -----------------------------------
 package.loaded["scripts/zones/Northern_San_dOria/TextIDs"] = nil;
 -----------------------------------
-
 require("scripts/globals/settings");
 require("scripts/globals/titles");
 require("scripts/globals/shop");
@@ -39,13 +38,13 @@ end;
 -----------------------------------
 
 function onTrigger(player,npc)
-    
+
     messengerFromBeyond = player:getQuestStatus(SANDORIA,MESSENGER_FROM_BEYOND);
-    
+
     -- Checking levels and jobs for af quest
     mLvl = player:getMainLvl();
     mJob = player:getMainJob();
-    
+
     if (messengerFromBeyond == QUEST_AVAILABLE and mJob == 3 and mLvl >= AF1_QUEST_LEVEL) then
         player:startEvent(0x02b1); -- Start quest "Messenger from Beyond"
     else
@@ -59,8 +58,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
--- printf("CSID: %u",csid);
--- printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -68,33 +67,33 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
--- printf("CSID: %u",csid);
--- printf("RESULT: %u",option);
-    
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
+
     if (csid == 0x02b1) then
         player:addQuest(SANDORIA,MESSENGER_FROM_BEYOND);
     elseif (csid == 0x02b2) then
-        if (player:getFreeSlotsCount() == 0) then 
+        if (player:getFreeSlotsCount() == 0) then
             player:messageSpecial(ITEM_CANNOT_BE_OBTAINED,17422);
         else
             player:addItem(17422);
             player:messageSpecial(ITEM_OBTAINED,17422); -- Blessed Hammer
             player:tradeComplete();
-            player:addFame(SANDORIA,SAN_FAME*AF1_FAME);
+            player:addFame(SANDORIA,AF1_FAME);
             player:completeQuest(SANDORIA,MESSENGER_FROM_BEYOND);
         end
     elseif (csid == 0x02b3) then
-        if (player:getFreeSlotsCount() == 0) then 
+        if (player:getFreeSlotsCount() == 0) then
             player:messageSpecial(ITEM_CANNOT_BE_OBTAINED,14091); -- Healer's Duckbills
         else
             player:addItem(14091);
             player:messageSpecial(ITEM_OBTAINED,14091); -- Healer's Duckbills
             player:tradeComplete();
-            player:addFame(SANDORIA,SAN_FAME*AF2_FAME);
+            player:addFame(SANDORIA,AF2_FAME);
             player:completeQuest(SANDORIA,PRELUDE_OF_BLACK_AND_WHITE);
         end
     elseif (csid == 0x02b4) then
-        if (player:getFreeSlotsCount() == 0) then 
+        if (player:getFreeSlotsCount() == 0) then
             player:messageSpecial(ITEM_CANNOT_BE_OBTAINED,12640); -- Healer's Briault
         else
             player:addTitle(PARAGON_OF_WHITE_MAGE_EXCELLENCE);
@@ -102,9 +101,9 @@ function onEventFinish(player,csid,option)
             player:addItem(12640);
             player:messageSpecial(ITEM_OBTAINED,12640); -- Healer's Briault
             player:tradeComplete();
-            player:addFame(SANDORIA,SAN_FAME*AF3_FAME);
+            player:addFame(SANDORIA,AF3_FAME);
             player:completeQuest(SANDORIA,PIEUJE_S_DECISION);
         end
     end
-    
+
 end;

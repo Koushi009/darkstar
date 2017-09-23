@@ -2,7 +2,7 @@
 -- Area: Sauromugue Champaign
 -- NPC:  Tiger Bones
 -- Involed in Quest: The Fanged One.
--- @pos 666 -8 -379 120
+-- !pos 666 -8 -379 120
 -------------------------------------
 package.loaded["scripts/zones/Sauromugue_Champaign/TextIDs"] = nil;
 -------------------------------------
@@ -26,20 +26,26 @@ end;
 function onTrigger(player,npc)
 
     if (player:getQuestStatus(WINDURST,THE_FANGED_ONE) == QUEST_ACCEPTED) then
-        deadTiger = player:getVar("TheFangedOne_Died");
 
-        if (deadTiger == 1 and player:hasKeyItem(OLD_TIGERS_FANG) == false) then
+        local oldTiger = 17268808;
+        local tigerAction = GetMobAction(oldTiger);
+        local fangedOneCS = player:getVar("TheFangedOneCS");
+
+        if (player:hasKeyItem(OLD_TIGERS_FANG) == false and
+            fangedOneCS == 2) then
+
             player:addKeyItem(OLD_TIGERS_FANG);
             player:messageSpecial(KEYITEM_OBTAINED, OLD_TIGERS_FANG);
-        elseif (deadTiger == 0) then
-            if (GetMobAction(17268808) == 0) then
-                SpawnMob(17268808):addStatusEffect(EFFECT_POISON,40,10,210);
-                player:messageSpecial(OLD_SABERTOOTH_DIALOG_I);
-                player:setVar("TheFangedOne_Died",1);
-            end
-        end
-    end
-    
+            player:setVar("TheFangedOneCS", 0);
+
+        elseif (tigerAction == ACTION_NONE and fangedOneCS == 1) then
+
+            SpawnMob(oldTiger):addStatusEffect(EFFECT_POISON,40,10,210);
+            player:messageSpecial(OLD_SABERTOOTH_DIALOG_I);
+        else
+            player:messageSpecial(NOTHING_HAPPENS);
+        end;
+end;
 end;
 
 -----------------------------------
@@ -47,8 +53,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -56,7 +62,7 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
 end;

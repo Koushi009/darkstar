@@ -4,8 +4,8 @@
 -- Start & Finishes Quest: Love and Ice, A Test of True Love
 -- Start Quest: Lovers in the Dusk
 -- Involved in Quest: The Siren's Tear
--- @zone: 236
--- @pos -146.476 -7.48 -10.889
+-- @zone 236
+-- !pos -146.476 -7.48 -10.889
 -----------------------------------
 
 require("scripts/globals/quests");
@@ -16,7 +16,7 @@ require("scripts/globals/quests");
 -----------------------------------
 
 function onTrade(player,npc,trade)
-end; 
+end;
 
 
 -----------------------------------
@@ -64,7 +64,7 @@ function onTrigger(player,npc)
     else
         player:startEvent(0x00b6);
     end
-end; 
+end;
 
 
 -----------------------------------
@@ -72,8 +72,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 
@@ -82,8 +82,8 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 
     if (csid == 0x0006) then
         player:setVar("SirensTear",1);
@@ -94,15 +94,15 @@ function onEventFinish(player,csid,option)
         player:addKeyItem(CARMELOS_SONG_SHEET);
         player:messageSpecial(KEYITEM_OBTAINED,CARMELOS_SONG_SHEET);
     elseif (csid == 0x00ba) then
-        if (player:getFreeSlotsCount() == 0) then 
+        if (player:getFreeSlotsCount() == 0) then
             player:messageSpecial(ITEM_CANNOT_BE_OBTAINED,17356);
-        else 
+        else
             player:setVar("LoveAndIceProgress",0);
             player:needToZone(true);
             player:addTitle(SORROW_DROWNER);
             player:addItem(17356);
             player:messageSpecial(ITEM_OBTAINED,17356); -- Lamia Harp
-            player:addFame(BASTOK,BAS_FAME*120);
+            player:addFame(BASTOK,120);
             player:completeQuest(BASTOK,LOVE_AND_ICE);
         end
     elseif (csid == 0x010e) then
@@ -113,7 +113,7 @@ function onEventFinish(player,csid,option)
     elseif (csid == 0x0112) then
         player:setVar("ATestOfTrueLoveProgress",0);
         player:needToZone(true);
-        player:addFame(BASTOK,BAS_FAME*120);
+        player:addFame(BASTOK,120);
         player:completeQuest(BASTOK,A_TEST_OF_TRUE_LOVE);
     elseif (csid == 0x0113) then
         player:addQuest(BASTOK,LOVERS_IN_THE_DUSK);

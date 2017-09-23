@@ -13,8 +13,7 @@ require("scripts/globals/status");
 -----------------------------------------
 
 function onItemCheck(target)
-    result = 0;
-    return result;
+    return 0;
 end;
 
 -----------------------------------------
@@ -22,5 +21,5 @@ end;
 -----------------------------------------
 
 function onItemUse(target)
-    target:addTP(10);
+    target:addTP(100);
 end;

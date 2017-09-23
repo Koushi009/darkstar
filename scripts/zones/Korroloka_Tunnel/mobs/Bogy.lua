@@ -3,26 +3,33 @@
 --  Mob: Bogy
 -----------------------------------
 
--- require("scripts/zones/Korroloka_Tunnel/MobIDs");
+require("scripts/zones/Korroloka_Tunnel/MobIDs");
 
 -----------------------------------
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
+function onMobDeath(mob, player, isKiller)
 
-    checkGoVregime(ally,mob,732,1);
+    checkGoVregime(player,mob,732,1);
 
-    mob = mob:getID();
-    if (Dame_Blanche_PH[mob] ~= nil) then
+end;
 
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
+    local mobID = mob:getID();
+
+    if (Dame_Blanche_PH[mobID] ~= nil) then
         local ToD = GetServerVariable("[POP]Dame_Blanche");
-        if (ToD <= os.time(t) and GetMobAction(Dame_Blanche) == 0) then
-            if (math.random((1),(20)) == 5) then
+        if (ToD <= os.time() and GetMobAction(Dame_Blanche) == 0) then
+            if (math.random(1,20) == 5) then
                 UpdateNMSpawnPoint(Dame_Blanche);
-                GetMobByID(Dame_Blanche):setRespawnTime(GetMobRespawnTime(mob));
-                SetServerVariable("[PH]Dame_Blanche", mob);
-                DeterMob(mob, true);
+                GetMobByID(Dame_Blanche):setRespawnTime(GetMobRespawnTime(mobID));
+                SetServerVariable("[PH]Dame_Blanche", mobID);
+                DisallowRespawn(mobID, true);
             end
         end
     end

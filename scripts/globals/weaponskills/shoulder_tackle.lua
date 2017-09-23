@@ -16,7 +16,7 @@ require("scripts/globals/settings");
 require("scripts/globals/weaponskills");
 -----------------------------------
 
-function onUseWeaponSkill(player, target, wsID, tp, primary)
+function onUseWeaponSkill(player, target, wsID, tp, primary, action, taChar)
 
     local params = {};
     params.numHits = 1;
@@ -26,14 +26,13 @@ function onUseWeaponSkill(player, target, wsID, tp, primary)
     params.canCrit = false;
     params.acc100 = 0.0; params.acc200= 0.0; params.acc300= 0.0;
     params.atkmulti = 1;
-    local damage, criticalHit, tpHits, extraHits = doPhysicalWeaponskill(player, target, wsID, params, tp, primary);
+    local damage, criticalHit, tpHits, extraHits = doPhysicalWeaponskill(player, target, wsID, tp, primary, action, taChar, params);
 
     if (USE_ADOULIN_WEAPON_SKILL_CHANGES == true) then
         params.vit_wsc = 1.0;
     end
 
     if (damage > 0) then
-        local tp = player:getTP();
         local duration = (tp/50);
         if (target:hasStatusEffect(EFFECT_STUN) == false) then
             target:addStatusEffect(EFFECT_STUN, 1, 0, duration);

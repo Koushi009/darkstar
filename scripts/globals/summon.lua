@@ -1,14 +1,9 @@
 
 require("scripts/globals/common");
 require("scripts/globals/status");
+require("scripts/globals/msg");
 
 SUMMONING_MAGIC_SKILL = 38
-
-MSG_NONE = 0; -- display nothing
-MSG_NO_EFFECT = 189;
-MSG_DAMAGE = 185; -- player uses, target takes 10 damage. DEFAULT
-MSG_MISS = 188;
-MSG_RESIST = 85;
 
 function AvatarPhysicalMove(avatar,target,skill,numberofhits,accmod,dmgmod1,dmgmodsubsequent,tpeffect,mtp100,mtp200,mtp300)
     returninfo = {};
@@ -20,7 +15,7 @@ function AvatarPhysicalMove(avatar,target,skill,numberofhits,accmod,dmgmod1,dmgm
     lvluser = avatar:getMainLvl();
     lvltarget = target:getMainLvl();
     local master = avatar:getMaster();
-    local bonusacc = utils.clamp(master:getSkillLevel(SKILL_SUM) - master:getMaxSkillLevel(avatar:getMainLvl(), JOB_SMN, SUMMONING_SKILL), 0, 200);
+    local bonusacc = utils.clamp(master:getSkillLevel(SKILL_SUM) - master:getMaxSkillLevel(avatar:getMainLvl(), JOBS.SMN, SUMMONING_SKILL), 0, 200);
     acc = avatar:getACC() + bonusacc;
     eva = target:getEVA();
 
@@ -123,7 +118,11 @@ function AvatarPhysicalMove(avatar,target,skill,numberofhits,accmod,dmgmod1,dmgm
     if (hitslanded == 0 or finaldmg == 0) then
         finaldmg = 0;
         hitslanded = 0;
-        skill:setMsg(MSG_MISS);
+        skill:setMsg(msgBasic.MISS);
+    end
+
+    if finaldmg > 0 then
+        target:wakeUp()
     end
 
     returninfo.dmg = finaldmg;
@@ -170,7 +169,7 @@ function AvatarFinalAdjustments(dmg,mob,skill,target,skilltype,skillparam,shadow
 
     -- set message to damage
     -- this is for AoE because its only set once
-    skill:setMsg(MSG_DAMAGE);
+    skill:setMsg(msgBasic.DAMAGE);
 
     --Handle shadows depending on shadow behaviour / skilltype
     if (shadowbehav < 5 and shadowbehav ~= MOBPARAM_IGNORE_SHADOWS) then --remove 'shadowbehav' shadows.
@@ -298,20 +297,20 @@ end;
 -- used to stop tp move status effects
 function AvatarPhysicalHit(skill, dmg)
     -- if message is not the default. Then there was a miss, shadow taken etc
-    return skill:getMsg() == MSG_DAMAGE;
+    return skill:getMsg() == msgBasic.DAMAGE;
 end;
 
 function avatarFTP(tp,ftp1,ftp2,ftp3)
-    if (tp<100) then
-        tp=100;
+    if (tp < 1000) then
+        tp = 1000;
     end
-    if (tp>=100 and tp<200) then
-        return ftp1 + ( ((ftp2-ftp1)/100) * (tp-100));
-    elseif (tp>=200 and tp<=300) then
-        --generate a straight line between ftp2 and ftp3 and find point @ tp
-        return ftp2 + ( ((ftp3-ftp2)/100) * (tp-200));
+    if (tp >= 1000 and tp < 2000) then
+        return ftp1 + ( ((ftp2-ftp1)/100) * (tp-1000));
+    elseif (tp >= 2000 and tp <= 3000) then
+        -- generate a straight line between ftp2 and ftp3 and find point @ tp
+        return ftp2 + ( ((ftp3-ftp2)/100) * (tp-2000));
     end
-    return 1; --no ftp mod
+    return 1; -- no ftp mod
 end;
 
 --------

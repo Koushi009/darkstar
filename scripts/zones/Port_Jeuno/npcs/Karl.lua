@@ -2,12 +2,10 @@
 -- Area: Port Jeuno
 -- NPC: Karl
 -- Starts and Finishes Quest: Child's Play
--- @pos -60 0.1 -8 246
+-- !pos -60 0.1 -8 246
 -----------------------------------
 package.loaded["scripts/zones/Port_Jeuno/TextIDs"] = nil;
-package.loaded["scripts/globals/settings"] = nil;
 -----------------------------------
-
 require("scripts/globals/settings");
 require("scripts/globals/titles");
 require("scripts/globals/keyitems");
@@ -20,10 +18,10 @@ require("scripts/zones/Port_Jeuno/TextIDs");
 -----------------------------------
 
 function onTrade(player,npc,trade)
-    if (player:getQuestStatus(JEUNO,CHILD_S_PLAY) == QUEST_ACCEPTED and trade:hasItemQty(776,1) == true and trade:getItemCount() == 1) then 
-        player:startEvent(0x0001); -- Finish quest 
+    if (player:getQuestStatus(JEUNO,CHILD_S_PLAY) == QUEST_ACCEPTED and trade:hasItemQty(776,1) == true and trade:getItemCount() == 1) then
+        player:startEvent(0x0001); -- Finish quest
     end
-end; 
+end;
 
 -----------------------------------
 -- onTrigger Action
@@ -35,8 +33,8 @@ function onTrigger(player,npc)
 
     if (player:getQuestStatus(JEUNO,LURE_OF_THE_WILDCAT_JEUNO) == QUEST_ACCEPTED and player:getMaskBit(WildcatJeuno,16) == false) then
         player:startEvent(316);
-    elseif (player:getQuestStatus(JEUNO,THE_WONDER_MAGIC_SET) == QUEST_ACCEPTED and ChildsPlay == QUEST_AVAILABLE) then 
-        player:startEvent(0x0000); -- Start quest 
+    elseif (player:getQuestStatus(JEUNO,THE_WONDER_MAGIC_SET) == QUEST_ACCEPTED and ChildsPlay == QUEST_AVAILABLE) then
+        player:startEvent(0x0000); -- Start quest
     elseif (ChildsPlay == QUEST_ACCEPTED) then
         player:startEvent(0x003d); -- mid quest CS
     else
@@ -50,8 +48,8 @@ end;
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -59,15 +57,15 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
-    if (csid == 0x0000) then 
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
+    if (csid == 0x0000) then
         player:addQuest(JEUNO,CHILD_S_PLAY);
-    elseif (csid == 0x0001) then 
+    elseif (csid == 0x0001) then
         player:addTitle(TRADER_OF_MYSTERIES);
         player:addKeyItem(WONDER_MAGIC_SET);
         player:messageSpecial(KEYITEM_OBTAINED,WONDER_MAGIC_SET);
-        player:addFame(JEUNO, JEUNO_FAME*30);
+        player:addFame(JEUNO, 30);
         player:tradeComplete(trade);
         player:completeQuest(JEUNO,CHILD_S_PLAY);
     elseif (csid == 316) then

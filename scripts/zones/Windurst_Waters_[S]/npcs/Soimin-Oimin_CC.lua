@@ -2,9 +2,9 @@
 --  Area: Windurst Waters (S)
 --   NPC: Soimin-Oimin, C.C.
 --  Type: Retrace
--- @zone: 94
---  @pos -51.010 -6.276 213.678
--- 
+-- @zone 94
+-- !pos -51.010 -6.276 213.678
+--
 -- Auto-Script: Requires Verification (Verified by Brawndo)
 -----------------------------------
 package.loaded["scripts/zones/Windurst_Waters_[S]/TextIDs"] = nil;

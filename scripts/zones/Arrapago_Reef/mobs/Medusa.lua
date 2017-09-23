@@ -1,7 +1,7 @@
 -----------------------------------
 -- Area: Arrapago Reef
 --  MOB: Medusa
--- @pos -458 -20 458
+-- !pos -458 -20 458
 -- TODO: resists, attack/def boosts
 -----------------------------------
 
@@ -47,7 +47,7 @@ end;
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob, killer, ally)
-    ally:showText(mob, MEDUSA_DEATH);
-    ally:addTitle(GORGONSTONE_SUNDERER);
+function onMobDeath(mob, player, isKiller)
+    player:showText(mob, MEDUSA_DEATH);
+    player:addTitle(GORGONSTONE_SUNDERER);
 end;

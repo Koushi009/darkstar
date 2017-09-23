@@ -1,7 +1,7 @@
 -----------------------------------
 -- Area: Aydeewa Subterrane
 --  NPC: ??? (Spawn Pandemonium Warden)
--- @pos 200 33 -140 68
+-- !pos 200 33 -140 68
 -----------------------------------
 package.loaded["scripts/zones/Aydeewa_Subterrane/TextIDs"] = nil;
 -----------------------------------
@@ -15,7 +15,7 @@ require("scripts/zones/Aydeewa_Subterrane/TextIDs");
 function onTrade(player,npc,trade)
     -- Pandemonium key
     if (trade:hasItemQty(2572,1) and trade:getItemCount() == 1 and GetMobAction(17056168) == 0) then
-        SpawnMob(17056168,180):updateClaim(player); -- Pandemonium Warden
+        SpawnMob(17056168):updateClaim(player); -- Pandemonium Warden
         player:tradeComplete();
     end
 end;

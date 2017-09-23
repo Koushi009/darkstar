@@ -11,20 +11,27 @@ require("scripts/globals/fieldsofvalor");
 -- onMobDeath
 -----------------------------------
 
-function onMobDeath(mob,killer,ally)
-    checkRegime(ally,mob,9,1);
-    checkRegime(ally,mob,10,2);
+function onMobDeath(mob, player, isKiller)
+    checkRegime(player,mob,9,1);
+    checkRegime(player,mob,10,2);
 
-    mob = mob:getID();
-    if (Valkurm_Emperor_PH[mob] ~= nil) then
+end;
 
-        VE_ToD = GetServerVariable("[POP]Valkurm_Emperor");
-        if (VE_ToD <= os.time(t) and GetMobAction(Valkurm_Emperor) == 0) then
+-----------------------------------
+-- onMobDespawn
+-----------------------------------
+
+function onMobDespawn(mob)
+    local mobID = mob:getID();
+
+    if (Valkurm_Emperor_PH[mobID] ~= nil) then
+        local VE_ToD = GetServerVariable("[POP]Valkurm_Emperor");
+        if (VE_ToD <= os.time() and GetMobAction(Valkurm_Emperor) == 0) then
             if (math.random(1,20) == 5) then
                 UpdateNMSpawnPoint(Valkurm_Emperor);
-                GetMobByID(Valkurm_Emperor):setRespawnTime(GetMobRespawnTime(mob));
-                SetServerVariable("[PH]Valkurm_Emperor", mob);
-                DeterMob(mob, true);
+                GetMobByID(Valkurm_Emperor):setRespawnTime(GetMobRespawnTime(mobID));
+                SetServerVariable("[PH]Valkurm_Emperor", mobID);
+                DisallowRespawn(mobID, true);
             end
         end
     end

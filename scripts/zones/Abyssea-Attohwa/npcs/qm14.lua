@@ -1,24 +1,46 @@
 -----------------------------------
 -- Zone: Abyssea-Attohwa
---  NPC: ???
--- Spawns: Gaizkin
+--  NPC: qm14 (???)
+-- Spawns Smok
+-- !pos ? ? ? 215
 -----------------------------------
-
+require("scripts/globals/keyitems");
 require("scripts/globals/status");
 
 -----------------------------------
--- onTrade Action
+-- onTrigger Action
 -----------------------------------
 
-function onTrade(player,npc,trade)
+function onTrigger(player,npc)
 --[[
-    if (trade:hasItemQty(3075,1) == false) then -- Player is missing at least one required item.
-        player:startEvent(1010, 3075); -- Inform payer what items they need.
-    elseif (GetMobAction(17658264) == ACTION_NONE) then -- mob not already spawned from this
-        if (trade:hasItemQty(3075,1) and trade:getItemCount() == 1) then -- Player has all the required items.
-            SpawnMob(17658264):updateClaim(player); -- Spawn NM, Despawn after inactive for 5 minutes (pt has to reclaim within 5 of a wipe)
-            player:tradeComplete();
+    if (GetMobAction(17658274) == ACTION_NONE) then -- NM not already spawned from this
+        if (player:hasKeyItem(HOLLOW_DRAGON_EYE)) then
+            player:startEvent(1022, HOLLOW_DRAGON_EYE); -- Ask if player wants to use KIs
+        else
+            player:startEvent(1023, HOLLOW_DRAGON_EYE); -- Do not ask, because player is missing at least 1.
         end
     end
 ]]
+end;
+
+-----------------------------------
+-- onEventUpdate
+-----------------------------------
+
+function onEventUpdate(player,csid,option)
+    -- printf("CSID2: %u",csid);
+    -- printf("RESULT2: %u",option);
+end;
+
+-----------------------------------
+-- onEventFinish
+-----------------------------------
+
+function onEventFinish(player,csid,option)
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
+    if (csid == 1022 and option == 1) then
+        SpawnMob(17658274):updateClaim(player); -- Spawn NM, Despawn after inactive for 5 minutes (pt has to reclaim within 5 of a wipe)
+        player:delKeyItem(HOLLOW_DRAGON_EYE);
+    end
 end;

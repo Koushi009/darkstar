@@ -2,7 +2,7 @@
 -- Area: Giddeus
 -- NPC:  Ghoo Pakya
 -- Involved in Mission 1-3
--- @pos -139 0 147 145
+-- !pos -139 0 147 145
 -----------------------------------
 package.loaded["scripts/zones/Giddeus/TextIDs"] = nil;
 -----------------------------------
@@ -24,7 +24,7 @@ end;
 -----------------------------------
 
 function onTrigger(player,npc)
-    
+
     if (player:getCurrentMission(WINDURST) == THE_PRICE_OF_PEACE) then
         if (player:hasKeyItem(DRINK_OFFERINGS)) then
             -- We have the offerings
@@ -44,16 +44,16 @@ function onTrigger(player,npc)
     else
         player:startEvent(0x0034);
     end
-    
+
 end
-    
+
 -----------------------------------
 -- onEventUpdate
 -----------------------------------
 
 function onEventUpdate(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
 end;
 
 -----------------------------------
@@ -61,18 +61,18 @@ end;
 -----------------------------------
 
 function onEventFinish(player,csid,option)
---printf("CSID: %u",csid);
---printf("RESULT: %u",option);
-    
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
+
     if (csid == 0x0031) then
         player:delKeyItem(DRINK_OFFERINGS);
         player:setVar("ghoo_talk",1);
-        
+
         if (player:hasKeyItem(FOOD_OFFERINGS) == false) then
             player:setVar("MissionStatus",2);
         end
     elseif (csid == 0x0032) then
         player:setVar("ghoo_talk",2);
     end
-    
+
 end;
